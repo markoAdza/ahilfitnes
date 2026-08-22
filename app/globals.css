@@ -1,0 +1,165 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------------------
+   Design tokens, sampled from the reference design.
+   Exposed to Tailwind as utilities: bg-lime, text-ink, border-line, etc.
+--------------------------------------------------------------------------- */
+@theme {
+  --color-lime: #c4f82a;
+  --color-lime-dark: #b0e618;
+  /* Lime for TEXT on light backgrounds. The neon lime only reaches ~1.7:1 on
+     white, so links/active nav use this darkened lime (4.9:1, WCAG AA). */
+  --color-lime-ink: #5c7a00;
+  --color-ink: #0f1729;
+  --color-ink-soft: #1c2740;
+  --color-body: #55647a;
+  --color-surface: #f7f9fc;
+  --color-line: #e6eaf0;
+  --color-coral: #ee7168;
+  --color-footer: #1b1b1b;
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+@layer base {
+  * {
+    /* Anchors and scroll-to targets clear the 80px sticky navbar. */
+    scroll-margin-top: 6rem;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: #ffffff;
+    color: var(--color-body);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    /* Belt-and-braces against a stray wide child causing page-level scroll. */
+    overflow-x: hidden;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    color: var(--color-ink);
+    font-weight: 800;
+    /* The tight negative tracking is what gives the reference its dense look. */
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Visible, consistent keyboard focus everywhere. */
+  :focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  /* Dark surfaces need the light ring instead. */
+  .on-dark :focus-visible {
+    outline-color: var(--color-lime);
+  }
+}
+
+@layer utilities {
+  /* Fluid display type used by the hero and the big page headings. */
+  .text-display {
+    font-size: clamp(2.75rem, 8vw, 6.5rem);
+    line-height: 0.92;
+    letter-spacing: -0.04em;
+    font-weight: 900;
+  }
+
+  .text-h1 {
+    font-size: clamp(2.25rem, 5.5vw, 4.5rem);
+    line-height: 1;
+    letter-spacing: -0.035em;
+    font-weight: 900;
+  }
+
+  /* Page-banner heading (Equipment). Sized to stay on one line on desktop. */
+  .text-banner {
+    font-size: clamp(1.75rem, 4.2vw, 3.5rem);
+    line-height: 1.05;
+    letter-spacing: -0.035em;
+    font-weight: 900;
+  }
+
+  .text-h2 {
+    font-size: clamp(1.875rem, 4vw, 3.25rem);
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    font-weight: 800;
+  }
+
+  /* Standard page gutter, shared by every section. */
+  .container-page {
+    width: 100%;
+    max-width: 80rem;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+
+  @media (min-width: 768px) {
+    .container-page {
+      padding-inline: 2rem;
+    }
+  }
+
+  /*
+   * Hover-reveal used by the location and category cards.
+   *
+   * Details are in the DOM at all times and simply visible by default, so on
+   * touch devices (and for crawlers) nothing is ever hidden. Only pointers
+   * that genuinely support hover get the collapsed resting state.
+   */
+  .reveal {
+    opacity: 1;
+    max-height: 24rem;
+    transition:
+      opacity 0.35s ease,
+      max-height 0.45s ease,
+      transform 0.35s ease;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .reveal {
+      opacity: 0;
+      max-height: 0;
+      transform: translateY(0.5rem);
+      overflow: hidden;
+    }
+
+    .reveal-host:hover .reveal,
+    .reveal-host:focus-within .reveal {
+      opacity: 1;
+      max-height: 24rem;
+      transform: translateY(0);
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
