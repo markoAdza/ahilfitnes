@@ -1,31 +1,49 @@
 @import "tailwindcss";
 
 /* ---------------------------------------------------------------------------
-   Design tokens, sampled from the reference design.
-   Exposed to Tailwind as utilities: bg-lime, text-ink, border-line, etc.
+   Design tokens.
+
+   Warm near-monochrome: ink and paper carry the design, a single clay accent
+   appears sparingly (active nav, recommended plan, inline links). Neutrals are
+   warm rather than blue-grey so they sit with the amber-lit gym photography.
+
+   Exposed to Tailwind as utilities: bg-sand, text-ink, border-line, ...
 --------------------------------------------------------------------------- */
 @theme {
-  --color-lime: #c4f82a;
-  --color-lime-dark: #b0e618;
-  /* Lime for TEXT on light backgrounds. The neon lime only reaches ~1.7:1 on
-     white, so links/active nav use this darkened lime (4.9:1, WCAG AA). */
-  --color-lime-ink: #5c7a00;
-  --color-ink: #0f1729;
-  --color-ink-soft: #1c2740;
-  --color-body: #55647a;
-  --color-surface: #f7f9fc;
-  --color-line: #e6eaf0;
-  --color-coral: #ee7168;
-  --color-footer: #1b1b1b;
+  /* Ink — headings, primary buttons, dark bands. Warm black, not blue-black. */
+  --color-ink: #17140f;
+  --color-ink-soft: #2b2620;
+
+  /* Text */
+  --color-body: #55504a; /* 7.9:1 on white  */
+  --color-muted: #6f675e; /* 5.6:1 on white — labels, captions, meta */
+
+  /* Grounds */
+  --color-paper: #ffffff;
+  --color-sand: #f6f4f0; /* alternating section ground */
+  --color-sand-deep: #ece7df;
+
+  /* Hairlines. `line` separates blocks, `line-soft` separates rows within one. */
+  --color-line: #e2ddd5;
+  --color-line-soft: #efebe4;
+
+  /* The one accent. 6.4:1 on white, so it is safe for text as well as fills. */
+  --color-accent: #a83a24;
+  --color-accent-soft: #f4e8e3;
 
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system,
     "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-display: var(--font-archivo), var(--font-inter), ui-sans-serif,
+    system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+  /* One radius, used everywhere. Precise rather than soft. */
+  --radius-edge: 2px;
 }
 
 @layer base {
   * {
-    /* Anchors and scroll-to targets clear the 80px sticky navbar. */
-    scroll-margin-top: 6rem;
+    /* Anchors and scroll-to targets clear the sticky navbar. */
+    scroll-margin-top: 5.5rem;
   }
 
   html {
@@ -34,24 +52,36 @@
   }
 
   body {
-    background-color: #ffffff;
+    background-color: var(--color-paper);
     color: var(--color-body);
     font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
     /* Belt-and-braces against a stray wide child causing page-level scroll. */
     overflow-x: hidden;
   }
 
+  /*
+   * Headings use the display face at 500-600. The old design set everything to
+   * 900/uppercase, which flattens hierarchy — size and spacing do that work now.
+   */
   h1,
   h2,
   h3,
-  h4 {
+  h4,
+  h5,
+  h6 {
     color: var(--color-ink);
-    font-weight: 800;
-    /* The tight negative tracking is what gives the reference its dense look. */
-    letter-spacing: -0.03em;
-    line-height: 1.05;
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    line-height: 1.15;
+  }
+
+  h1,
+  h2 {
     text-wrap: balance;
   }
 
@@ -59,94 +89,119 @@
     text-wrap: pretty;
   }
 
+  /* Prices and tables line up column-wise. */
+  table {
+    font-variant-numeric: tabular-nums;
+  }
+
+  ::selection {
+    background-color: var(--color-accent-soft);
+    color: var(--color-ink);
+  }
+
   /* Visible, consistent keyboard focus everywhere. */
   :focus-visible {
-    outline: 2px solid var(--color-ink);
-    outline-offset: 3px;
-    border-radius: 4px;
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: 1px;
   }
 
   /* Dark surfaces need the light ring instead. */
   .on-dark :focus-visible {
-    outline-color: var(--color-lime);
+    outline-color: #ffffff;
   }
 }
 
 @layer utilities {
-  /* Fluid display type used by the hero and the big page headings. */
-  .text-display {
-    font-size: clamp(2.75rem, 8vw, 6.5rem);
-    line-height: 0.92;
-    letter-spacing: -0.04em;
-    font-weight: 900;
+  /* ---------------------------------------------------------------- type ---
+     A four-step display scale. Each step is distinct enough to read as a
+     level on its own, so no heading needs uppercase or weight 900 to shout.
+  --------------------------------------------------------------------- */
+  .type-display {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 5.4vw, 4.25rem);
+    font-weight: 600;
+    line-height: 1.02;
+    letter-spacing: -0.028em;
   }
 
-  .text-h1 {
-    font-size: clamp(2.25rem, 5.5vw, 4.5rem);
-    line-height: 1;
-    letter-spacing: -0.035em;
-    font-weight: 900;
+  .type-h1 {
+    font-size: clamp(2rem, 3.8vw, 3rem);
+    font-weight: 600;
+    line-height: 1.08;
+    letter-spacing: -0.024em;
   }
 
-  /* Page-banner heading (Equipment). Sized to stay on one line on desktop. */
-  .text-banner {
-    font-size: clamp(1.75rem, 4.2vw, 3.5rem);
-    line-height: 1.05;
-    letter-spacing: -0.035em;
-    font-weight: 900;
+  .type-h2 {
+    font-size: clamp(1.625rem, 2.6vw, 2.25rem);
+    font-weight: 600;
+    line-height: 1.12;
+    letter-spacing: -0.02em;
   }
 
-  .text-h2 {
-    font-size: clamp(1.875rem, 4vw, 3.25rem);
-    line-height: 1.05;
-    letter-spacing: -0.03em;
-    font-weight: 800;
+  .type-h3 {
+    font-size: 1.1875rem;
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: -0.012em;
   }
 
-  /* Standard page gutter, shared by every section. */
+  /* Micro-label: the only place uppercase is allowed. */
+  .type-label {
+    font-family: var(--font-sans);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  /* Standfirst under a heading. */
+  .type-lede {
+    font-size: 1.0625rem;
+    line-height: 1.65;
+  }
+
+  @media (min-width: 768px) {
+    .type-lede {
+      font-size: 1.125rem;
+    }
+  }
+
+  .nums {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* -------------------------------------------------------------- layout ---
+     Standard page gutter, shared by every section.
+  --------------------------------------------------------------------- */
   .container-page {
     width: 100%;
-    max-width: 80rem;
+    max-width: 78rem;
     margin-inline: auto;
     padding-inline: 1.25rem;
   }
 
   @media (min-width: 768px) {
     .container-page {
-      padding-inline: 2rem;
+      padding-inline: 2.5rem;
     }
   }
 
   /*
-   * Hover-reveal used by the location and category cards.
-   *
-   * Details are in the DOM at all times and simply visible by default, so on
-   * touch devices (and for crawlers) nothing is ever hidden. Only pointers
-   * that genuinely support hover get the collapsed resting state.
+   * Underline for inline links: sits below the baseline, in a hairline colour,
+   * and firms up to ink on hover. Quieter than a colour swap.
    */
-  .reveal {
-    opacity: 1;
-    max-height: 24rem;
-    transition:
-      opacity 0.35s ease,
-      max-height 0.45s ease,
-      transform 0.35s ease;
+  .link-underline {
+    text-decoration-line: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.25em;
+    text-decoration-color: var(--color-line);
+    transition: text-decoration-color 0.15s ease, color 0.15s ease;
   }
 
-  @media (hover: hover) and (pointer: fine) {
-    .reveal {
-      opacity: 0;
-      max-height: 0;
-      transform: translateY(0.5rem);
-      overflow: hidden;
-    }
-
-    .reveal-host:hover .reveal,
-    .reveal-host:focus-within .reveal {
-      opacity: 1;
-      max-height: 24rem;
-      transform: translateY(0);
-    }
+  .link-underline:hover {
+    text-decoration-color: currentColor;
   }
 }
 

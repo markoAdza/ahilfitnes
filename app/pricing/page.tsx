@@ -1,44 +1,38 @@
 import type { Metadata } from "next";
 
-import { AddOnCards } from "@/components/AddOnCards";
 import { CtaBand } from "@/components/CtaBand";
-import { PriceTable } from "@/components/PriceTable";
+import { PageHeader } from "@/components/PageHeader";
+import { PriceList } from "@/components/PriceList";
 import { PricingCards } from "@/components/PricingCards";
-import { SectionHeading } from "@/components/ui/SectionHeading";
+import { fromPrice } from "@/lib/pricing";
 
 export const metadata: Metadata = {
   title: "Pricing",
   description:
-    "Ahil Fitness memberships from €37/month. Monthly, 6-month and annual plans with 24/7 access to all three locations, plus personal training and group class rates.",
+    "Ahil Fitness membership from €37 a month. Monthly, six-month and twelve-month plans with 24-hour access to all three gyms, plus personal training and class rates.",
   openGraph: {
-    title: "Flexible Membership Options | Ahil Fitness",
+    title: "Pricing — Ahil Fitness",
     description:
-      "Monthly €49, 6 months €42/month, annual €37/month — all with 24/7 access to three locations.",
+      "Monthly €49, six months €42 a month, twelve months €37 a month — all with 24-hour access to three gyms.",
   },
 };
 
 export default function PricingPage() {
   return (
     <>
-      <section className="bg-white pt-16 pb-12 md:pt-24">
-        <div className="container-page">
-          <SectionHeading
-            as="h1"
-            eyebrow="Pricing"
-            title="Flexible Membership Options"
-            subtitle="Choose the plan that fits your lifestyle. All memberships include 24/7 access to all three locations"
-          />
-        </div>
-      </section>
+      <PageHeader
+        title="Membership and prices"
+        intro={`From €${fromPrice} a month for 24-hour access to all three gyms. No joining fee, and the monthly plan cancels any time.`}
+        crumbs={[{ label: "Home", href: "/" }, { label: "Pricing" }]}
+      />
 
       <PricingCards />
-      <PriceTable />
-      <AddOnCards />
+      <PriceList />
 
       <CtaBand
         title="Not sure which plan fits?"
-        body="Call us and we will talk it through — no pressure, no joining fee."
-        cta="Talk to Us"
+        body="Call and we will talk it through. If you are between two plans, start on the monthly one — you can move up whenever you want."
+        cta="Talk to us"
       />
     </>
   );

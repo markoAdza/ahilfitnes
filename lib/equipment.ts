@@ -9,32 +9,12 @@
 export const categories = ["Cardio", "Strength", "Functional", "Recovery"] as const;
 export type Category = (typeof categories)[number];
 
-/** Keys of the inline SVG set in components/EquipmentIcon.tsx. */
-export type IconName =
-  | "treadmill"
-  | "elliptical"
-  | "rower"
-  | "bike"
-  | "dumbbell"
-  | "cable"
-  | "barbell"
-  | "legpress"
-  | "kettlebell"
-  | "rope"
-  | "box"
-  | "trx"
-  | "foamroller"
-  | "stretch"
-  | "massage"
-  | "sauna";
-
 export type EquipmentItem = {
   slug: string;
   name: string;
   category: Category;
   blurb: string;
   specs: string[];
-  icon: IconName;
 };
 
 export const equipment: EquipmentItem[] = [
@@ -51,11 +31,10 @@ export const equipment: EquipmentItem[] = [
       "Shock-absorbing deck reduces joint impact",
       "Built-in heart-rate and programme tracking",
     ],
-    icon: "treadmill",
   },
   {
     slug: "elliptical-trainers",
-    name: "Elliptical Trainers",
+    name: "Elliptical trainers",
     category: "Cardio",
     blurb: "Low-impact cardio machines for full-body workouts",
     specs: [
@@ -64,11 +43,10 @@ export const equipment: EquipmentItem[] = [
       "Moving handlebars engage the upper body",
       "Ideal for joint-friendly conditioning",
     ],
-    icon: "elliptical",
   },
   {
     slug: "rowing-machines",
-    name: "Rowing Machines",
+    name: "Rowing machines",
     category: "Cardio",
     blurb: "Water and air resistance rowers for complete cardio training",
     specs: [
@@ -77,11 +55,10 @@ export const equipment: EquipmentItem[] = [
       "Live split, pace and watt readouts",
       "Interval programmes preloaded",
     ],
-    icon: "rower",
   },
   {
     slug: "stationary-bikes",
-    name: "Stationary Bikes",
+    name: "Stationary bikes",
     category: "Cardio",
     blurb: "Upright and recumbent bikes with digital tracking",
     specs: [
@@ -90,13 +67,12 @@ export const equipment: EquipmentItem[] = [
       "Fully adjustable seat and bar height",
       "Watt, cadence and calorie display",
     ],
-    icon: "bike",
   },
 
   // -------------------------------------------------------------- Strength
   {
     slug: "free-weights",
-    name: "Free Weights",
+    name: "Free weights",
     category: "Strength",
     blurb: "Full dumbbell and plate range for every level of lifter",
     specs: [
@@ -105,11 +81,10 @@ export const equipment: EquipmentItem[] = [
       "Adjustable benches at every rack",
       "Dedicated lifting platform",
     ],
-    icon: "dumbbell",
   },
   {
     slug: "cable-machines",
-    name: "Cable Machines",
+    name: "Cable machines",
     category: "Strength",
     blurb: "Dual-adjustable pulleys for unlimited movement variety",
     specs: [
@@ -118,11 +93,10 @@ export const equipment: EquipmentItem[] = [
       "Smooth 2:1 ratio weight stacks",
       "Cross-over and functional set-ups",
     ],
-    icon: "cable",
   },
   {
     slug: "smith-machine",
-    name: "Smith Machine",
+    name: "Smith machine",
     category: "Strength",
     blurb: "Guided barbell work with safety catches at every height",
     specs: [
@@ -131,11 +105,10 @@ export const equipment: EquipmentItem[] = [
       "Train heavy without a spotter",
       "Squat, press and shrug ready",
     ],
-    icon: "barbell",
   },
   {
     slug: "leg-press",
-    name: "Leg Press",
+    name: "Leg press",
     category: "Strength",
     blurb: "Plate-loaded leg press and hack squat for lower-body power",
     specs: [
@@ -144,7 +117,6 @@ export const equipment: EquipmentItem[] = [
       "Adjustable back pad and foot plate",
       "Hack squat conversion available",
     ],
-    icon: "legpress",
   },
 
   // ------------------------------------------------------------ Functional
@@ -159,11 +131,10 @@ export const equipment: EquipmentItem[] = [
       "Open turf area for swings",
       "Powder-coated grip finish",
     ],
-    icon: "kettlebell",
   },
   {
     slug: "battle-ropes",
-    name: "Battle Ropes",
+    name: "Battle ropes",
     category: "Functional",
     blurb: "High-intensity conditioning ropes with anchored stations",
     specs: [
@@ -172,11 +143,10 @@ export const equipment: EquipmentItem[] = [
       "Built for HIIT finishers",
       "Two stations per location",
     ],
-    icon: "rope",
   },
   {
     slug: "plyo-boxes",
-    name: "Plyo Boxes",
+    name: "Plyo boxes",
     category: "Functional",
     blurb: "Soft and wooden boxes for explosive jump training",
     specs: [
@@ -185,11 +155,10 @@ export const equipment: EquipmentItem[] = [
       "Non-slip landing surface",
       "Stackable for custom heights",
     ],
-    icon: "box",
   },
   {
     slug: "suspension-trainers",
-    name: "TRX Suspension",
+    name: "TRX suspension trainers",
     category: "Functional",
     blurb: "Bodyweight suspension training for core and stability",
     specs: [
@@ -198,13 +167,12 @@ export const equipment: EquipmentItem[] = [
       "Core, pull and mobility work",
       "Rig space for four users",
     ],
-    icon: "trx",
   },
 
   // -------------------------------------------------------------- Recovery
   {
     slug: "foam-rolling",
-    name: "Foam Rolling Zone",
+    name: "Foam rolling zone",
     category: "Recovery",
     blurb: "Rollers, balls and bands for self-myofascial release",
     specs: [
@@ -213,11 +181,10 @@ export const equipment: EquipmentItem[] = [
       "Resistance bands in all strengths",
       "Guided routines posted on the wall",
     ],
-    icon: "foamroller",
   },
   {
     slug: "stretching-area",
-    name: "Stretching Area",
+    name: "Stretching area",
     category: "Recovery",
     blurb: "Matted open floor for mobility and cool-down work",
     specs: [
@@ -226,11 +193,10 @@ export const equipment: EquipmentItem[] = [
       "Mobility rig with bands",
       "Quiet zone away from the racks",
     ],
-    icon: "stretch",
   },
   {
     slug: "massage-room",
-    name: "Massage Room",
+    name: "Massage room",
     category: "Recovery",
     blurb: "Private sports-massage room with certified therapists",
     specs: [
@@ -239,7 +205,6 @@ export const equipment: EquipmentItem[] = [
       "Bookable in Hrastnik and Sevnica",
       "Reserve at reception or by phone",
     ],
-    icon: "massage",
   },
   {
     slug: "sauna",
@@ -252,7 +217,6 @@ export const equipment: EquipmentItem[] = [
       "Towel service available as an add-on",
       "Next to the shower facilities",
     ],
-    icon: "sauna",
   },
 ];
 
@@ -269,27 +233,27 @@ export const categoryShowcase: {
     focus: "center",
     highlights: [
       "Treadmills",
-      "Elliptical Trainers",
-      "Rowing Machines",
-      "Stationary Bikes",
+      "Elliptical trainers",
+      "Rowing machines",
+      "Stationary bikes",
     ],
   },
   {
     category: "Strength",
     image: "/images/strength.jpg",
     focus: "center",
-    highlights: ["Free Weights", "Cable Machines", "Smith Machine", "Leg Press"],
+    highlights: ["Free weights", "Cable machines", "Smith machine", "Leg press"],
   },
   {
     category: "Functional",
     image: "/images/hrastnik.jpg",
     focus: "center",
-    highlights: ["Kettlebells", "Battle Ropes", "Plyo Boxes", "TRX Suspension"],
+    highlights: ["Kettlebells", "Battle ropes", "Plyo boxes", "TRX suspension trainers"],
   },
   {
     category: "Recovery",
     image: "/images/sevnica.jpg",
     focus: "right",
-    highlights: ["Foam Rolling Zone", "Stretching Area", "Massage Room", "Sauna"],
+    highlights: ["Foam rolling zone", "Stretching area", "Massage room", "Sauna"],
   },
 ];

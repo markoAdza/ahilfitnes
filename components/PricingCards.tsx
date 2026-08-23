@@ -1,79 +1,64 @@
-import { Badge } from "@/components/ui/Badge";
 import { ButtonLink } from "@/components/ui/Button";
 import { CheckIcon } from "@/components/ui/Icons";
+import { Label } from "@/components/ui/Label";
 import { plans } from "@/lib/pricing";
 import { site, telHref } from "@/lib/site";
 
+/**
+ * The three plans in full.
+ *
+ * No overlapping ribbon, no scale transform and no second discount badge: the
+ * recommended plan is marked by an ink border and one small label, which is
+ * enough to read as the default without shouting over the other two.
+ */
 export function PricingCards() {
   return (
-    <section className="bg-white pb-8 md:pb-12">
+    <section className="bg-sand py-16 md:py-20">
       <div className="container-page">
-        <ul className="grid items-start gap-8 lg:grid-cols-3 lg:gap-6">
+        <ul className="grid items-stretch gap-6 lg:grid-cols-3">
           {plans.map((plan) => (
-            <li key={plan.slug} className="relative lg:pt-4">
-              {plan.popular ? (
-                <div className="absolute top-0 left-1/2 z-10 -translate-x-1/2">
-                  <Badge
-                    tone="coral"
-                    className="px-5 py-2 text-xs tracking-widest shadow-sm"
-                  >
-                    MOST POPULAR
-                  </Badge>
-                </div>
-              ) : null}
-
+            <li key={plan.slug} className="flex">
               <article
                 className={[
-                  "flex h-full flex-col rounded-2xl border bg-white px-8 pb-8 text-center",
-                  /* Extra headroom so MOST POPULAR does not crowd SAVE 15%. */
-                  plan.popular
-                    ? "border-2 border-lime pt-12 lg:scale-[1.03]"
-                    : "border-line pt-8",
+                  "flex w-full flex-col rounded-[2px] border bg-white p-7 md:p-8",
+                  plan.recommended ? "border-ink" : "border-line",
                 ].join(" ")}
               >
-                {plan.save ? (
-                  <div className="mb-5">
-                    <Badge tone="coral" className="px-4 py-1.5 text-xs tracking-wider">
-                      {plan.save}
-                    </Badge>
-                  </div>
-                ) : (
-                  /* Keeps the three card headers on the same baseline. */
-                  <div aria-hidden="true" className="mb-5 h-[1.875rem]" />
-                )}
+                <div className="flex items-baseline justify-between gap-3">
+                  <h2 className="type-h3">{plan.name}</h2>
+                  {plan.recommended ? <Label tone="accent">Recommended</Label> : null}
+                </div>
 
-                <h2 className="text-3xl font-bold">{plan.name}</h2>
-
-                <p className="mt-4 flex items-end justify-center gap-1">
-                  <span className="text-6xl font-black tracking-tight text-ink">
-                    &euro;{plan.monthly}
+                <p className="mt-5 flex items-baseline gap-1.5">
+                  <span className="nums font-display text-5xl font-semibold tracking-tight text-ink">
+                    €{plan.monthly}
                   </span>
-                  <span className="pb-2 text-lg text-body">/month</span>
+                  <span className="text-sm text-muted">a month</span>
                 </p>
 
-                <p className="mt-2 text-sm text-body">
-                  {plan.upfront
-                    ? `€${plan.upfront} (paid upfront)`
-                    : `€${plan.monthly} billed monthly`}
-                </p>
+                <p className="mt-3 text-[0.9375rem] text-body">{plan.billing}</p>
+                <p className="mt-1 min-h-6 text-sm text-muted">{plan.save ?? ""}</p>
 
-                <ul className="mt-8 flex flex-1 flex-col gap-4 text-left">
+                <ul className="mt-7 flex flex-1 flex-col gap-3 border-t border-line pt-6">
                   {plan.features.map((feature) => (
                     <li key={feature} className="flex items-start gap-3">
-                      <CheckIcon className="mt-1 size-4 shrink-0 text-lime-ink" />
-                      <span className="text-body">{feature}</span>
+                      <CheckIcon
+                        aria-hidden="true"
+                        className="mt-1 size-4 shrink-0 text-accent"
+                      />
+                      <span className="text-[0.9375rem] text-body">{feature}</span>
                     </li>
                   ))}
                 </ul>
 
                 <ButtonLink
                   href={telHref(site.phone)}
-                  variant={plan.popular ? "lime" : "ink"}
+                  variant={plan.recommended ? "primary" : "secondary"}
                   size="lg"
                   className="mt-8 w-full"
-                  aria-label={`Select the ${plan.name} plan — call ${site.phone}`}
+                  aria-label={`Sign up for the ${plan.name} plan — call ${site.phone}`}
                 >
-                  Select Plan
+                  Call to sign up
                 </ButtonLink>
               </article>
             </li>

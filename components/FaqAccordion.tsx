@@ -2,28 +2,29 @@
 
 import { useState } from "react";
 
-import { MinusIcon, PlusIcon } from "@/components/ui/Icons";
+import { ChevronDownIcon } from "@/components/ui/Icons";
 import { faqs } from "@/lib/faq";
 
+/**
+ * Hairline-separated disclosure list.
+ *
+ * The rows used to be individually bordered, rounded cards with a shadow on the
+ * open one, which made ten questions look like ten unrelated objects. A single
+ * ruled list reads as one document.
+ */
 export function FaqAccordion() {
-  // First item open on load, matching the reference design.
+  // First item open on load.
   const [open, setOpen] = useState<number | null>(0);
 
   return (
-    <ul className="mx-auto flex max-w-3xl flex-col gap-4">
+    <ul className="border-t border-line">
       {faqs.map((faq, index) => {
         const isOpen = open === index;
         const panelId = `faq-panel-${index}`;
         const buttonId = `faq-button-${index}`;
 
         return (
-          <li
-            key={faq.question}
-            className={[
-              "overflow-hidden rounded-2xl border bg-white transition-colors",
-              isOpen ? "border-line shadow-[0_2px_20px_rgba(15,23,41,0.05)]" : "border-line",
-            ].join(" ")}
-          >
+          <li key={faq.question} className="border-b border-line">
             <h3>
               <button
                 id={buttonId}
@@ -31,18 +32,23 @@ export function FaqAccordion() {
                 aria-expanded={isOpen}
                 aria-controls={panelId}
                 onClick={() => setOpen(isOpen ? null : index)}
-                className="flex w-full items-center justify-between gap-6 px-6 py-6 text-left md:px-8"
+                className="group flex w-full items-start justify-between gap-6 py-6 text-left"
               >
-                <span className="text-lg font-bold text-ink md:text-xl">
+                <span
+                  className={[
+                    "type-h3 transition-colors",
+                    isOpen ? "text-ink" : "text-ink group-hover:text-accent",
+                  ].join(" ")}
+                >
                   {faq.question}
                 </span>
-                <span className="shrink-0 text-lime-ink">
-                  {isOpen ? (
-                    <MinusIcon className="size-5" />
-                  ) : (
-                    <PlusIcon className="size-5" />
-                  )}
-                </span>
+                <ChevronDownIcon
+                  aria-hidden="true"
+                  className={[
+                    "mt-1 size-5 shrink-0 text-muted transition-transform duration-200",
+                    isOpen ? "-rotate-180" : "",
+                  ].join(" ")}
+                />
               </button>
             </h3>
 
@@ -51,9 +57,9 @@ export function FaqAccordion() {
               role="region"
               aria-labelledby={buttonId}
               hidden={!isOpen}
-              className="px-6 pb-7 md:px-8"
+              className="pb-7"
             >
-              <p className="leading-relaxed text-body md:text-lg">{faq.answer}</p>
+              <p className="max-w-3xl text-body">{faq.answer}</p>
             </div>
           </li>
         );

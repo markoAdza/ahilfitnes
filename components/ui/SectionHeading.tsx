@@ -1,64 +1,50 @@
 import type { ReactNode } from "react";
 
+import { Label } from "@/components/ui/Label";
+
 /**
- * Shared section header: optional eyebrow, heading and subtitle.
+ * Shared section header: a hairline rule, a micro-label, the heading, and an
+ * optional standfirst. Left-aligned and rule-topped by default — the rule is
+ * the compositional device that ties the sections together, in place of the
+ * old centred-everything treatment.
  *
- * `as` controls the heading level only — every section heading renders at the
- * same display size regardless, matching the reference design.
+ * `action` renders opposite the heading on desktop (e.g. a "see all" link), so
+ * a section can offer a way out without a stranded centred link underneath it.
  */
 export function SectionHeading({
-  eyebrow,
+  label,
   title,
-  subtitle,
-  align = "center",
+  intro,
+  action,
   as: Tag = "h2",
-  uppercase = false,
+  rule = true,
   className,
 }: {
-  eyebrow?: string;
+  label?: string;
   title: ReactNode;
-  subtitle?: ReactNode;
-  align?: "center" | "left";
+  intro?: ReactNode;
+  action?: ReactNode;
   as?: "h1" | "h2";
-  uppercase?: boolean;
+  rule?: boolean;
   className?: string;
 }) {
-  const centered = align === "center";
-
   return (
     <div
-      className={[
-        centered ? "mx-auto max-w-4xl text-center" : "max-w-5xl text-left",
-        className,
-      ]
+      className={[rule ? "border-t border-line pt-8" : "", className]
         .filter(Boolean)
         .join(" ")}
     >
-      {eyebrow ? (
-        <p className="mb-4 text-xs font-bold tracking-[0.2em] text-body uppercase">
-          <span aria-hidden="true" className="mr-2 text-lime-ink">
-            &bull;
-          </span>
-          {eyebrow}
-        </p>
-      ) : null}
+      {label ? <Label className="mb-5">{label}</Label> : null}
 
-      <Tag className={["text-h2", uppercase ? "uppercase" : ""].filter(Boolean).join(" ")}>
-        {title}
-      </Tag>
+      <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between md:gap-12">
+        <div className="max-w-2xl">
+          <Tag className={Tag === "h1" ? "type-h1" : "type-h2"}>{title}</Tag>
 
-      {subtitle ? (
-        <p
-          className={[
-            "mt-5 max-w-2xl text-lg leading-relaxed text-body md:text-xl",
-            centered ? "mx-auto" : "",
-          ]
-            .filter(Boolean)
-            .join(" ")}
-        >
-          {subtitle}
-        </p>
-      ) : null}
+          {intro ? <p className="type-lede mt-4 text-body">{intro}</p> : null}
+        </div>
+
+        {action ? <div className="shrink-0 md:pb-1">{action}</div> : null}
+      </div>
     </div>
   );
 }

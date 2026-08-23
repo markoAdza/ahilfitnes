@@ -1,7 +1,6 @@
 /**
- * Every price on the site lives here, so the Home teaser, the /pricing plan
- * cards, the Complete Price List table and the Add-ons grid can never drift
- * apart. Figures are taken verbatim from the original design.
+ * Every price on the site lives here, so the Home rate card and the /pricing
+ * page can never drift apart. Figures are taken from the original design.
  */
 
 export type Plan = {
@@ -9,11 +8,14 @@ export type Plan = {
   name: string;
   /** Effective monthly cost, in euros. */
   monthly: number;
-  /** Total paid upfront, shown under the price. Null for the rolling plan. */
+  /** Total paid upfront. Null for the rolling monthly plan. */
   upfront: number | null;
-  /** Discount badge text, e.g. "SAVE 15%". */
+  /** How the plan is billed, in plain words. */
+  billing: string;
+  /** Saving against the rolling monthly rate, e.g. "Save €42 a year". */
   save: string | null;
-  popular: boolean;
+  /** Marks the plan the gym points people at. One at most. */
+  recommended: boolean;
   features: string[];
 };
 
@@ -23,105 +25,102 @@ export const plans: Plan[] = [
     name: "Monthly",
     monthly: 49,
     upfront: null,
+    billing: "Billed monthly, cancel any time",
     save: null,
-    popular: false,
+    recommended: false,
     features: [
-      "24/7 Access to All Locations",
-      "Unlimited Gym Access",
+      "24-hour access to all three gyms",
+      "Locker room and showers",
+      "Sauna",
       "Free WiFi",
-      "Locker Room Access",
-      "Shower Facilities",
     ],
   },
   {
     slug: "6-months",
-    name: "6 Months",
+    name: "6 months",
     monthly: 42,
     upfront: 252,
-    save: "SAVE 15%",
-    popular: true,
+    billing: "€252 paid upfront",
+    save: "Save €42 over six months",
+    recommended: true,
     features: [
       "Everything in Monthly",
-      "Priority Equipment Access",
-      "Free Fitness Assessment",
-      "Nutrition Guide",
-      "Guest Pass (2x/month)",
+      "Fitness assessment when you join",
+      "Nutrition guide",
+      "Two guest passes a month",
     ],
   },
   {
     slug: "annual",
-    name: "Annual",
+    name: "12 months",
     monthly: 37,
     upfront: 444,
-    save: "SAVE 25%",
-    popular: false,
+    billing: "€444 paid upfront",
+    save: "Save €144 over the year",
+    recommended: false,
     features: [
-      "Everything in 6 Months",
-      "Personal Training Session (1x/month)",
-      "Unlimited Guest Passes",
-      "Free Merchandise",
-      "VIP Member Events",
+      "Everything in 6 months",
+      "One personal training session a month",
+      "Unlimited guest passes",
+      "Member events",
     ],
   },
 ];
+
+/** Cheapest effective monthly rate, quoted on the Home page. */
+export const fromPrice = Math.min(...plans.map((plan) => plan.monthly));
 
 export type PriceRow = {
   service: string;
   price: string;
-  /** Memberships are emphasised in the table, add-ons are not. */
-  emphasis?: boolean;
+  /** Small note under the service name — billing detail or saving. */
+  note?: string;
 };
 
-export const priceList: PriceRow[] = [
-  { service: "Monthly Membership", price: "€49/month", emphasis: true },
-  { service: "6-Month Membership", price: "€252 (€42/month)", emphasis: true },
-  { service: "Annual Membership", price: "€444 (€37/month)", emphasis: true },
-  { service: "Personal Training (1 Session)", price: "€45" },
-  { service: "Personal Training (5 Sessions)", price: "€200" },
-  { service: "Personal Training (10 Sessions)", price: "€380" },
-  { service: "Group Class Drop-in", price: "€15" },
-  { service: "Group Class 10-Pack", price: "€120" },
-  { service: "Unlimited Group Classes (Monthly)", price: "€80" },
-  { service: "Locker Rental (Monthly)", price: "€10" },
-  { service: "Towel Service (Monthly)", price: "€15" },
-  { service: "Massage Therapy (60min)", price: "€60" },
-];
-
-export type AddOn = {
-  label: string;
-  price: string;
-  /** Optional savings note rendered in coral beneath the label. */
-  save?: string;
-};
-
-export type AddOnGroup = {
+export type PriceGroup = {
   title: string;
-  items: AddOn[];
+  rows: PriceRow[];
 };
 
-export const addOnGroups: AddOnGroup[] = [
+/**
+ * The full price list, grouped.
+ *
+ * This replaces the old flat table plus a second "Add-ons" section that listed
+ * the same twelve figures again — one grouped list is shorter to read and
+ * leaves nothing to contradict itself.
+ */
+export const priceGroups: PriceGroup[] = [
   {
-    title: "Personal Training",
-    items: [
-      { label: "1 Session", price: "€45" },
-      { label: "5 Sessions", price: "€200", save: "Save €25" },
-      { label: "10 Sessions", price: "€380", save: "Save €70" },
+    title: "Membership",
+    rows: [
+      { service: "Monthly", price: "€49", note: "Rolling, cancel any time" },
+      { service: "6 months", price: "€252", note: "Works out at €42 a month" },
+      { service: "12 months", price: "€444", note: "Works out at €37 a month" },
+      { service: "Day pass", price: "€15", note: "Walk-ins and guests" },
     ],
   },
   {
-    title: "Group Classes",
-    items: [
-      { label: "Drop-in", price: "€15" },
-      { label: "10 Class Pack", price: "€120", save: "Save €30" },
-      { label: "Unlimited Monthly", price: "€80" },
+    title: "Personal training",
+    rows: [
+      { service: "One session", price: "€45" },
+      { service: "Five sessions", price: "€200", note: "Saves €25" },
+      { service: "Ten sessions", price: "€380", note: "Saves €70" },
     ],
   },
   {
-    title: "Additional Services",
-    items: [
-      { label: "Locker Rental (Monthly)", price: "€10" },
-      { label: "Towel Service (Monthly)", price: "€15" },
-      { label: "Massage Therapy (60min)", price: "€60" },
+    title: "Group classes",
+    rows: [
+      { service: "Drop-in", price: "€15" },
+      { service: "Ten-class pack", price: "€120", note: "Saves €30" },
+      { service: "Unlimited, per month", price: "€80" },
+    ],
+  },
+  {
+    title: "Extras",
+    rows: [
+      { service: "Locker rental, per month", price: "€10" },
+      { service: "Towel service, per month", price: "€15" },
+      { service: "Massage therapy, 60 minutes", price: "€60" },
     ],
   },
 ];

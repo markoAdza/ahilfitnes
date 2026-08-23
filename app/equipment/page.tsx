@@ -1,15 +1,16 @@
 import type { Metadata } from "next";
 
 import { CtaBand } from "@/components/CtaBand";
-import { EquipmentFilterGrid } from "@/components/EquipmentFilterGrid";
-import { PageHero } from "@/components/PageHero";
+import { EquipmentCatalogue } from "@/components/EquipmentCatalogue";
+import { PageHeader } from "@/components/PageHeader";
+import { equipment } from "@/lib/equipment";
 
 export const metadata: Metadata = {
   title: "Equipment",
   description:
-    "Explore the full range of cardio, strength, functional and recovery equipment available 24/7 at all three Ahil Fitness locations.",
+    "The full list of cardio, strength, functional and recovery equipment at all three Ahil Fitness gyms, with specifications for each.",
   openGraph: {
-    title: "Premium Equipment Collection | Ahil Fitness",
+    title: "Equipment — Ahil Fitness",
     description:
       "Cardio, strength, functional and recovery equipment across Hrastnik, Zagorje and Sevnica.",
   },
@@ -18,18 +19,17 @@ export const metadata: Metadata = {
 export default function EquipmentPage() {
   return (
     <>
-      <PageHero
-        title="Premium Equipment Collection"
-        image="/images/equipment-hero.jpg"
-        alt="Rows of cardio machines in a bright Ahil Fitness gym floor"
+      <PageHeader
+        title="Equipment"
+        intro={`Every one of the ${equipment.length} machines and areas below is at all three gyms, and included with any membership. Specifications are listed so you know what you are walking into.`}
         crumbs={[{ label: "Home", href: "/" }, { label: "Equipment" }]}
       />
 
-      <EquipmentFilterGrid />
+      <EquipmentCatalogue />
 
       <CtaBand
-        title="Ready to put it to work?"
-        body="Every machine on this page is included with any membership, at all three locations."
+        title="Come and try it"
+        body="Walk in during reception hours for a look around, or buy a day pass for €15 and use the place properly."
       />
     </>
   );

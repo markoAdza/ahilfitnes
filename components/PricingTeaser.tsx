@@ -1,78 +1,77 @@
 import Link from "next/link";
 
-import { Badge } from "@/components/ui/Badge";
 import { ButtonLink } from "@/components/ui/Button";
 import { ArrowRightIcon } from "@/components/ui/Icons";
+import { Label } from "@/components/ui/Label";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { plans } from "@/lib/pricing";
+import { site, telHref } from "@/lib/site";
 
+/**
+ * Rate card for the three plans.
+ *
+ * The old teaser showed three cards containing a price and a "View Details"
+ * button and nothing else — three clicks to learn anything. This states the
+ * rate, how it is billed and what it saves, so the section answers the
+ * question on its own.
+ */
 export function PricingTeaser() {
   return (
-    <section id="pricing" className="bg-white py-20 md:py-28">
+    <section id="pricing" className="bg-sand py-20 md:py-28">
       <div className="container-page">
         <SectionHeading
-          eyebrow="Pricing"
-          title="Flexible Membership Options"
-          subtitle="Choose the plan that fits your lifestyle. All memberships include 24/7 access to all three locations"
+          label="Membership"
+          title="Pay monthly, or commit and save"
+          intro="Every plan includes the same 24-hour access to all three gyms. There is no joining fee."
+          action={
+            <Link
+              href="/pricing"
+              className="inline-flex items-center gap-2 text-[0.9375rem] font-medium text-ink transition-colors hover:text-accent"
+            >
+              Full price list
+              <ArrowRightIcon aria-hidden="true" className="size-4" />
+            </Link>
+          }
         />
 
-        <ul className="mt-14 grid gap-6 md:grid-cols-3">
-          {plans.map((plan) => (
-            <li key={plan.slug} className="relative">
-              {plan.popular ? (
-                <div className="absolute -top-3 right-6 z-10">
-                  <Badge tone="coral" className="px-3 py-1 text-[0.625rem] tracking-widest">
-                    MOST POPULAR
-                  </Badge>
-                </div>
-              ) : null}
+        <div className="mt-14 rounded-[2px] border border-line bg-white">
+          <dl className="grid divide-y divide-line md:grid-cols-3 md:divide-x md:divide-y-0">
+            {plans.map((plan) => (
+              <div key={plan.slug} className="flex flex-col gap-1 p-7 md:p-8">
+                <dt className="flex items-baseline justify-between gap-3">
+                  <span className="type-h3 text-ink">{plan.name}</span>
+                  {plan.recommended ? (
+                    <Label tone="accent">Recommended</Label>
+                  ) : null}
+                </dt>
 
-              <article
-                className={[
-                  "flex h-full flex-col rounded-2xl border bg-white p-7",
-                  plan.popular
-                    ? "border-lime shadow-[0_0_0_1px_var(--color-lime)]"
-                    : "border-line",
-                ].join(" ")}
-              >
-                {plan.save ? (
-                  <div className="mb-4">
-                    <Badge tone="coral" className="text-[0.625rem] tracking-widest">
-                      {plan.save}
-                    </Badge>
-                  </div>
-                ) : null}
+                <dd className="mt-3">
+                  <p className="flex items-baseline gap-1.5">
+                    <span className="nums font-display text-5xl font-semibold tracking-tight text-ink">
+                      €{plan.monthly}
+                    </span>
+                    <span className="text-sm text-muted">a month</span>
+                  </p>
 
-                <h3 className="text-2xl font-bold">{plan.name}</h3>
+                  <p className="mt-3 text-[0.9375rem] text-body">{plan.billing}</p>
 
-                <p className="mt-3 flex items-end gap-1">
-                  <span className="text-5xl font-black tracking-tight text-ink">
-                    &euro;{plan.monthly}
-                  </span>
-                  <span className="pb-1.5 text-sm text-body">/month</span>
-                </p>
+                  {/* Keeps the three columns on the same baseline. */}
+                  <p className="mt-1 text-sm text-muted">
+                    {plan.save ?? " "}
+                  </p>
+                </dd>
+              </div>
+            ))}
+          </dl>
 
-                <ButtonLink
-                  href="/pricing"
-                  variant="outline"
-                  size="lg"
-                  className="mt-7 w-full"
-                >
-                  View Details
-                </ButtonLink>
-              </article>
-            </li>
-          ))}
-        </ul>
-
-        <div className="mt-10 text-center">
-          <Link
-            href="/pricing"
-            className="inline-flex items-center gap-2 font-bold text-ink transition-colors hover:text-lime-ink"
-          >
-            View Full Price List
-            <ArrowRightIcon className="size-4" />
-          </Link>
+          <div className="flex flex-col items-start gap-4 border-t border-line px-7 py-6 sm:flex-row sm:items-center sm:justify-between md:px-8">
+            <p className="text-[0.9375rem] text-body">
+              Sign up at reception in any of the three gyms, or over the phone.
+            </p>
+            <ButtonLink href={telHref(site.phone)} className="shrink-0">
+              Call {site.phone}
+            </ButtonLink>
+          </div>
         </div>
       </div>
     </section>
