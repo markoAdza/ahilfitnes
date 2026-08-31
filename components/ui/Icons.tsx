@@ -60,10 +60,76 @@ export function ArrowUpRightIcon(props: SVGProps<SVGSVGElement>) {
   );
 }
 
+export function ArrowLeftIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...stroke} {...props}>
+      <path d="M20 12H5" />
+      <path d="m11 18-6-6 6-6" />
+    </svg>
+  );
+}
+
 export function ChevronDownIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg {...stroke} {...props}>
       <path d="m6 9 6 6 6-6" />
+    </svg>
+  );
+}
+
+export function ChevronLeftIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...stroke} {...props}>
+      <path d="m15 18-6-6 6-6" />
+    </svg>
+  );
+}
+
+export function ChevronRightIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...stroke} {...props}>
+      <path d="m9 18 6-6-6-6" />
+    </svg>
+  );
+}
+
+export function SearchIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...stroke} {...props}>
+      <circle cx="11" cy="11" r="7" />
+      <path d="m20 20-3.5-3.5" />
+    </svg>
+  );
+}
+
+/** Zloženi zemljevid — gumb, ki naloži vdelan zemljevid. */
+export function MapIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...stroke} {...props}>
+      <path d="m9 4 6 2 5.4-1.8a.5.5 0 0 1 .6.5v13.6a1 1 0 0 1-.7 1L15 21l-6-2-5.4 1.8a.5.5 0 0 1-.6-.5V6.7a1 1 0 0 1 .7-1Z" />
+      <path d="M9 4v15" />
+      <path d="M15 6v15" />
+    </svg>
+  );
+}
+
+export function ClockIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...stroke} {...props}>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 7.5V12l3 2" />
+    </svg>
+  );
+}
+
+/** Povečava — prekrivna oznaka na sličicah v galeriji. */
+export function ExpandIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...stroke} {...props}>
+      <path d="M9 4H5a1 1 0 0 0-1 1v4" />
+      <path d="M15 4h4a1 1 0 0 1 1 1v4" />
+      <path d="M15 20h4a1 1 0 0 0 1-1v-4" />
+      <path d="M9 20H5a1 1 0 0 1-1-1v-4" />
     </svg>
   );
 }

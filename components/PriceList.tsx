@@ -1,38 +1,43 @@
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { eur } from "@/lib/i18n";
 import { priceGroups } from "@/lib/pricing";
 import { site, telHref } from "@/lib/site";
 
 /**
- * The full price list, grouped.
+ * Celoten cenik, po skupinah — na svetlem otoku.
  *
- * This replaces two sections that carried the same twelve figures: a
- * "Complete Price List" table and an "Additional Services & Add-ons" grid
- * repeating every row of it. One grouped table is shorter to read and cannot
- * contradict itself.
+ * Cela stran je temna, ta sekcija pa ne: sedemindvajset vrstic tabelaričnih
+ * številk se na svetlem bere bistveno bolje, in menjava podlage tu ni okras
+ * ampak edina razlika med "seznam, ki ga preletiš" in "seznam, ki ga preskočiš".
+ *
+ * Nadomešča dve sekciji, ki sta nosili istih dvanajst zneskov: tabelo
+ * "Celoten cenik" in mrežo "Dodatne storitve", ki je vsako vrstico ponovila.
+ * Ena skupinska tabela je krajša za branje in si ne more nasprotovati.
  */
 export function PriceList() {
   return (
-    <section id="price-list" className="bg-white py-20 md:py-28">
+    <section id="cenik" className="on-light bg-paper py-16 md:py-24">
       <div className="container-page">
         {/*
-         * One rule across the whole grid rather than one per column, so the
-         * "Price list" label and the first group label start on the same line.
+         * Ena črta čez celotno mrežo namesto ene na stolpec, da se oznaka
+         * "Cenik" in oznaka prve skupine začneta na isti vrstici.
          */}
-        <div className="grid gap-x-8 gap-y-10 border-t border-line pt-8 lg:grid-cols-12">
-          <div className="lg:col-span-4 lg:sticky lg:top-28 lg:self-start">
+        <div className="grid gap-x-8 gap-y-10 border-t border-paper-line pt-8 lg:grid-cols-12">
+          <div className="lg:sticky lg:top-28 lg:col-span-4 lg:self-start">
             <SectionHeading
               rule={false}
-              label="Price list"
-              title="Everything, in full"
-              intro="Personal training, classes and extras are pay-as-you-go — nothing is bundled into the membership you did not ask for."
+              tone="light"
+              label="Cenik"
+              title="Vse, v celoti"
+              intro="Osebni treningi, vadbe in dodatki se plačujejo po porabi — v članarino ni zavito nič, česar nisi želel."
             />
           </div>
 
           <div className="lg:col-span-8">
             <table className="w-full text-left">
               <caption className="sr-only">
-                Full price list: membership, personal training, group classes and
-                extras
+                Celoten cenik: članarina, osebni trening, skupinske vadbe in
+                dodatne storitve
               </caption>
 
               {priceGroups.map((group, groupIndex) => (
@@ -42,7 +47,7 @@ export function PriceList() {
                       scope="colgroup"
                       colSpan={2}
                       className={[
-                        "type-label border-b border-ink pb-3 text-left text-muted",
+                        "type-label border-b border-ink pb-3 text-left text-ink/60",
                         groupIndex === 0 ? "" : "pt-12",
                       ].join(" ")}
                     >
@@ -51,20 +56,20 @@ export function PriceList() {
                   </tr>
 
                   {group.rows.map((row) => (
-                    <tr key={row.service} className="border-b border-line-soft">
+                    <tr key={row.service} className="border-b border-paper-line">
                       <th
                         scope="row"
                         className="py-4 pr-6 text-left font-normal text-ink"
                       >
                         {row.service}
                         {row.note ? (
-                          <span className="mt-0.5 block text-sm text-muted">
+                          <span className="mt-0.5 block text-sm text-ink/55">
                             {row.note}
                           </span>
                         ) : null}
                       </th>
                       <td className="nums py-4 text-right align-top whitespace-nowrap text-ink">
-                        {row.price}
+                        {eur(row.price)}
                       </td>
                     </tr>
                   ))}
@@ -72,15 +77,15 @@ export function PriceList() {
               ))}
             </table>
 
-            <p className="mt-8 text-sm text-muted">
-              Prices include VAT. Call{" "}
+            <p className="mt-8 text-sm text-ink/55">
+              Cene vključujejo DDV. Če potrebuješ kaj, česar tu ni, pokliči{" "}
               <a
                 href={telHref(site.phone)}
-                className="nums link-underline text-body hover:text-ink"
+                className="nums link-underline text-accent-ink hover:text-ink"
               >
                 {site.phone}
-              </a>{" "}
-              if you need something that is not listed.
+              </a>
+              .
             </p>
           </div>
         </div>

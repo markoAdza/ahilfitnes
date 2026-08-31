@@ -1,14 +1,16 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { ReceptionStatus } from "@/components/ReceptionStatus";
 import {
   FacebookIcon,
   InstagramIcon,
   PhoneIcon,
+  PinIcon,
   TikTokIcon,
 } from "@/components/ui/Icons";
 import { Label } from "@/components/ui/Label";
-import { locations, nav, site, socials, telHref } from "@/lib/site";
+import { locations, mapsHref, nav, site, socials, telHref } from "@/lib/site";
 
 const socialIcons = {
   instagram: InstagramIcon,
@@ -17,110 +19,128 @@ const socialIcons = {
 } as const;
 
 /**
- * The newsletter signup that used to sit here has been removed rather than
- * restyled: it had no backend and confirmed "you are on the list" regardless,
- * which is the one thing a footer must not do. The space now carries the
- * addresses and phone numbers people come to a footer looking for.
+ * Prijava na e-novice, ki je nekoč stala tu, je odstranjena in ne prestiljena:
+ * ni imela zaledja in je vseeno potrdila "na seznamu si", kar je edina stvar,
+ * ki je noga ne sme narediti. Prostor zdaj nosi naslove in telefonske številke,
+ * torej tisto, zaradi česar ljudje pridejo v nogo.
  */
 export function Footer() {
   return (
-    <footer className="on-dark bg-ink text-white/60">
-      <div className="container-page grid gap-12 py-16 md:grid-cols-2 lg:grid-cols-12 lg:gap-8">
-        {/* Brand */}
-        <div className="lg:col-span-4">
-          <Image
-            src="/images/logo.png"
-            alt={site.name}
-            width={132}
-            height={148}
-            /* The logo art is black on transparent; invert it for dark ground. */
-            className="h-11 w-auto brightness-0 invert"
-          />
-          <p className="mt-6 max-w-xs text-[0.9375rem] leading-relaxed">
-            {site.tagline}
-          </p>
-        </div>
+    <footer
+      id="site-footer"
+      className="grain relative border-t border-line bg-ink-2"
+    >
+      <div className="relative z-1">
+        <div className="container-page grid gap-12 py-16 md:grid-cols-2 lg:grid-cols-12 lg:gap-8">
+          {/* Znamka */}
+          <div className="lg:col-span-4">
+            <Image
+              src="/images/logo.png"
+              alt={site.name}
+              width={132}
+              height={148}
+              /* Grafika logotipa je črna na prozornem; na temnem jo obrnemo. */
+              className="h-12 w-auto brightness-0 invert"
+            />
+            <p className="mt-6 max-w-xs text-[0.9375rem] leading-relaxed text-body">
+              {site.tagline}
+            </p>
 
-        {/* Locations */}
-        <div className="lg:col-span-5">
-          <Label as="h2" tone="light">
-            Locations
-          </Label>
-          <ul className="mt-6 flex flex-col gap-5">
-            {locations.map((location) => (
-              <li key={location.slug} className="text-[0.9375rem]">
-                <p className="font-medium text-white">{location.name}</p>
-                <p className="mt-0.5">{location.address}</p>
-                <a
-                  href={telHref(location.phone)}
-                  className="nums link-underline mt-0.5 inline-block transition-colors hover:text-white"
-                >
-                  {location.phone}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* Pages + contact */}
-        <div className="lg:col-span-3">
-          <Label as="h2" tone="light">
-            Pages
-          </Label>
-          <ul className="mt-6 flex flex-col gap-3 text-[0.9375rem]">
-            {nav
-              .filter((item) => item.href !== "/")
-              .map((item) => (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    className="transition-colors hover:text-white"
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-          </ul>
-
-          <div className="mt-10 border-t border-white/10 pt-6">
             <a
               href={telHref(site.phone)}
-              className="inline-flex items-center gap-2 text-[0.9375rem] font-medium text-white transition-colors hover:text-white/70"
+              className="mt-7 inline-flex items-center gap-2.5 text-chalk transition-colors hover:text-accent"
             >
-              <PhoneIcon className="size-4 text-white/50" />
-              <span className="nums">{site.phone}</span>
+              <PhoneIcon className="size-4 text-accent" />
+              <span className="nums type-h3">{site.phone}</span>
             </a>
-            <p className="mt-2 text-sm">
-              Gyms open 24 hours. Reception {site.reception}.
-            </p>
+
+            <ReceptionStatus className="mt-3" />
           </div>
-        </div>
-      </div>
 
-      <div className="border-t border-white/10">
-        <div className="container-page flex flex-col gap-4 py-6 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-sm">
-            &copy; {new Date().getFullYear()} {site.name}
-          </p>
+          {/* Lokacije */}
+          <div className="lg:col-span-5">
+            <Label as="h2">Lokacije</Label>
+            <ul className="mt-6 flex flex-col gap-6">
+              {locations.map((location) => (
+                <li key={location.slug} className="text-[0.9375rem]">
+                  <p className="font-medium text-chalk">{location.name}</p>
 
-          <ul className="flex items-center gap-5">
-            {socials.map((social) => {
-              const Icon = socialIcons[social.icon];
-              return (
-                <li key={social.label}>
                   <a
-                    href={social.href}
+                    href={mapsHref(location.address)}
                     target="_blank"
                     rel="noopener noreferrer"
-                    aria-label={social.label}
-                    className="inline-flex text-white/50 transition-colors hover:text-white"
+                    className="mt-1 inline-flex items-start gap-2 text-body transition-colors hover:text-chalk"
                   >
-                    <Icon className="size-5" />
+                    <PinIcon
+                      aria-hidden="true"
+                      className="mt-1 size-3.5 shrink-0 text-muted"
+                    />
+                    {location.address}
+                  </a>
+
+                  <a
+                    href={telHref(location.phone)}
+                    className="nums link-underline mt-1 block text-body transition-colors hover:text-chalk"
+                  >
+                    {location.phone}
                   </a>
                 </li>
-              );
-            })}
-          </ul>
+              ))}
+            </ul>
+          </div>
+
+          {/* Strani */}
+          <div className="lg:col-span-3">
+            <Label as="h2">Strani</Label>
+            <ul className="mt-6 flex flex-col gap-3 text-[0.9375rem]">
+              {nav
+                .filter((item) => item.href !== "/")
+                .map((item) => (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      className="text-body transition-colors hover:text-chalk"
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
+                ))}
+            </ul>
+
+            <div className="mt-10 border-t border-line pt-6">
+              <p className="text-sm text-muted">
+                Fitnesi so odprti 24 ur na dan, 365 dni na leto. Recepcija je
+                zasedena {site.reception}.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="border-t border-line">
+          <div className="container-page flex flex-col gap-4 py-6 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-sm text-muted">
+              &copy; {new Date().getFullYear()} {site.name}
+            </p>
+
+            <ul className="flex items-center gap-5">
+              {socials.map((social) => {
+                const Icon = socialIcons[social.icon];
+                return (
+                  <li key={social.label}>
+                    <a
+                      href={social.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={social.label}
+                      className="inline-flex text-muted transition-colors hover:text-chalk"
+                    >
+                      <Icon className="size-5" />
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
         </div>
       </div>
     </footer>

@@ -1,71 +1,95 @@
 @import "tailwindcss";
 
 /* ---------------------------------------------------------------------------
-   Design tokens.
+   Oblikovalski žetoni — temna industrijska različica.
 
-   Warm near-monochrome: ink and paper carry the design, a single clay accent
-   appears sparingly (active nav, recommended plan, inline links). Neutrals are
-   warm rather than blue-grey so they sit with the amber-lit gym photography.
+   Podlaga je topla skoraj-črna v štirih stopnjah, da se kartice, vdolbine in
+   lasnice ločijo brez sence. Barvo prispevajo fotografije; baker se pojavi
+   redko in namensko (aktivna navigacija, priporočen paket, aktiven zavihek,
+   števci). Cenik in odgovori stojijo na svetlem otoku, ker se 27 vrstic
+   tabelaričnih številk na svetlem bere bistveno bolje.
 
-   Exposed to Tailwind as utilities: bg-sand, text-ink, border-line, ...
+   Izpostavljeno Tailwindu kot pripomočki: bg-ink-2, text-chalk, border-line, ...
 --------------------------------------------------------------------------- */
 @theme {
-  /* Ink — headings, primary buttons, dark bands. Warm black, not blue-black. */
-  --color-ink: #17140f;
-  --color-ink-soft: #2b2620;
+  /* Podlage — topla skoraj-črna, štiri stopnje za plastenje. */
+  --color-ink: #0e0d0c; /* podlaga strani */
+  --color-ink-2: #161513; /* dvignjena površina, kartice */
+  --color-ink-3: #211f1c; /* hover, vdolbine, aktivni zavihek */
 
-  /* Text */
-  --color-body: #55504a; /* 7.9:1 on white  */
-  --color-muted: #6f675e; /* 5.6:1 on white — labels, captions, meta */
+  /* Lasnice. `line` loči bloke, `line-soft` vrstice znotraj bloka. */
+  --color-line: #2c2926;
+  --color-line-soft: #201e1b;
 
-  /* Grounds */
-  --color-paper: #ffffff;
-  --color-sand: #f6f4f0; /* alternating section ground */
-  --color-sand-deep: #ece7df;
+  /*
+   * Besedilo na temnem.
+   *
+   * Razmerja niso merjena samo proti --color-ink ampak proti NAJSVETLEJŠI
+   * podlagi, na kateri se barva pojavi (--color-accent-dim). Prvi izbor
+   * (#8b847b) je proti ink dosegel 5.2:1, na dvignjenih površinah pa je padel
+   * na 4.36:1 — pod mejo. Ta odtenek prestane povsod.
+   */
+  --color-chalk: #f5f2ec; /* naslovi — 17.4:1 na ink */
+  --color-body: #a9a29a; /* tekoče besedilo — 7.7:1 na ink, 6.4:1 na accent-dim */
+  --color-muted: #918a80; /* oznake, meta — 5.7:1 na ink, 4.7:1 na accent-dim */
 
-  /* Hairlines. `line` separates blocks, `line-soft` separates rows within one. */
-  --color-line: #e2ddd5;
-  --color-line-soft: #efebe4;
+  /* Svetel otok — cenik in pogosta vprašanja. */
+  --color-paper: #f5f2ec;
+  --color-paper-2: #e9e4db;
+  --color-paper-line: #d8d1c5;
 
-  /* The one accent. 6.4:1 on white, so it is safe for text as well as fills. */
-  --color-accent: #a83a24;
-  --color-accent-soft: #f4e8e3;
+  /*
+   * Akcent — baker/amber. Ujema se z amber osvetljenimi fotografijami fitnesa.
+   * `accent` je varen za besedilo na temnem (7.4:1). `accent-deep` na svetlem
+   * doseže le 3.1:1, zato je tam SAMO za polnila in velik displej; za akcentno
+   * besedilo na svetlem obstaja `accent-ink` (6.0:1).
+   */
+  --color-accent: #e0913a;
+  --color-accent-deep: #c8752b;
+  --color-accent-ink: #8a4e18;
+  --color-accent-dim: #2a1f13;
 
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system,
     "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --font-display: var(--font-archivo), var(--font-inter), ui-sans-serif,
     system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 
-  /* One radius, used everywhere. Precise rather than soft. */
+  /* En radij, povsod. Natančen rob, ne mehka tableta. */
   --radius-edge: 2px;
+
+  /* Višina lepljive navigacije — deljena med JS sentinelom in scroll-margin. */
+  --nav-h: 4rem;
 }
 
 @layer base {
   * {
-    /* Anchors and scroll-to targets clear the sticky navbar. */
-    scroll-margin-top: 5.5rem;
+    /* Kotve in cilji drsenja se ustavijo pod lepljivo navigacijo. */
+    scroll-margin-top: 6rem;
   }
 
   html {
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
+    background-color: var(--color-ink);
+    /* Dovoli prehod na `auto` višino, kar potrebuje razpiranje <details>. */
+    interpolate-size: allow-keywords;
   }
 
   body {
-    background-color: var(--color-paper);
+    background-color: var(--color-ink);
     color: var(--color-body);
     font-family: var(--font-sans);
     font-size: 1rem;
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
-    /* Belt-and-braces against a stray wide child causing page-level scroll. */
+    /* Varovalka pred zablodelim širokim otrokom, ki bi zadrsal celo stran. */
     overflow-x: hidden;
   }
 
   /*
-   * Headings use the display face at 500-600. The old design set everything to
-   * 900/uppercase, which flattens hierarchy — size and spacing do that work now.
+   * Naslovi uporabljajo displej pisavo. Kondenzacija in velikost nosita
+   * hierarhijo — zato noben naslov ne potrebuje teže 900.
    */
   h1,
   h2,
@@ -73,7 +97,7 @@
   h4,
   h5,
   h6 {
-    color: var(--color-ink);
+    color: var(--color-chalk);
     font-family: var(--font-display);
     font-weight: 600;
     letter-spacing: -0.015em;
@@ -89,74 +113,117 @@
     text-wrap: pretty;
   }
 
-  /* Prices and tables line up column-wise. */
+  /* Cene in tabele se poravnajo po stolpcih. */
   table {
     font-variant-numeric: tabular-nums;
   }
 
   ::selection {
-    background-color: var(--color-accent-soft);
+    background-color: var(--color-accent);
     color: var(--color-ink);
   }
 
-  /* Visible, consistent keyboard focus everywhere. */
+  /* Viden, enoten fokus tipkovnice povsod. */
   :focus-visible {
     outline: 2px solid var(--color-accent);
     outline-offset: 2px;
     border-radius: 1px;
   }
 
-  /* Dark surfaces need the light ring instead. */
-  .on-dark :focus-visible {
-    outline-color: #ffffff;
+  /* Svetel otok obrne vloge barv za vse, kar je v njem. */
+  .on-light {
+    color: var(--color-ink);
+  }
+
+  .on-light h1,
+  .on-light h2,
+  .on-light h3,
+  .on-light h4,
+  .on-light h5,
+  .on-light h6 {
+    color: var(--color-ink);
+  }
+
+  .on-light :focus-visible {
+    outline-color: var(--color-accent-ink);
+  }
+
+  /* Brskalnikov privzeti gumb za zaprtje dialoga nas ne zanima. */
+  dialog::backdrop {
+    background-color: rgb(0 0 0 / 0.88);
   }
 }
 
 @layer utilities {
-  /* ---------------------------------------------------------------- type ---
-     A four-step display scale. Each step is distinct enough to read as a
-     level on its own, so no heading needs uppercase or weight 900 to shout.
+  /* ---------------------------------------------------------------- tipografija ---
+     Archivo je variabilna z osjo širine (wdth 62–125). Displej stopnje jo
+     stisnejo, tekoče besedilo je normalne širine. Kondenzacija ni le okras:
+     slovenski nizi so ~15–20 % daljši od angleških in kondenziran displej to
+     pobere brez zmanjšanja velikosti.
   --------------------------------------------------------------------- */
-  .type-display {
+
+  /* Samo hero besedna znamka. Sme zapolniti širino žleba. */
+  .type-mega {
     font-family: var(--font-display);
-    font-size: clamp(2.5rem, 5.4vw, 4.25rem);
-    font-weight: 600;
-    line-height: 1.02;
-    letter-spacing: -0.028em;
+    font-size: clamp(3.5rem, 13.5vw, 11rem);
+    font-stretch: 76%;
+    font-weight: 700;
+    line-height: 0.84;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
   }
 
+  /* Naslovi podstrani. */
   .type-h1 {
-    font-size: clamp(2rem, 3.8vw, 3rem);
-    font-weight: 600;
-    line-height: 1.08;
-    letter-spacing: -0.024em;
+    font-family: var(--font-display);
+    font-size: clamp(2.25rem, 6vw, 4rem);
+    font-stretch: 84%;
+    font-weight: 700;
+    line-height: 0.95;
+    letter-spacing: -0.015em;
+    text-transform: uppercase;
   }
 
   .type-h2 {
-    font-size: clamp(1.625rem, 2.6vw, 2.25rem);
+    font-family: var(--font-display);
+    font-size: clamp(1.75rem, 4vw, 2.75rem);
+    font-stretch: 88%;
     font-weight: 600;
-    line-height: 1.12;
-    letter-spacing: -0.02em;
-  }
-
-  .type-h3 {
-    font-size: 1.1875rem;
-    font-weight: 600;
-    line-height: 1.3;
+    line-height: 1;
     letter-spacing: -0.012em;
   }
 
-  /* Micro-label: the only place uppercase is allowed. */
+  .type-h3 {
+    font-family: var(--font-display);
+    font-size: 1.125rem;
+    font-stretch: 100%;
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: -0.008em;
+  }
+
+  /* Števci in velike cene. */
+  .type-stat {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 7vw, 4.5rem);
+    font-stretch: 80%;
+    font-weight: 700;
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Mikro oznaka — edino mesto, kjer so velike črke dovoljene poleg displeja. */
   .type-label {
     font-family: var(--font-sans);
     font-size: 0.6875rem;
     font-weight: 600;
     line-height: 1.4;
-    letter-spacing: 0.14em;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
   }
 
-  /* Standfirst under a heading. */
+  /* Uvodni odstavek pod naslovom. */
   .type-lede {
     font-size: 1.0625rem;
     line-height: 1.65;
@@ -172,8 +239,8 @@
     font-variant-numeric: tabular-nums;
   }
 
-  /* -------------------------------------------------------------- layout ---
-     Standard page gutter, shared by every section.
+  /* -------------------------------------------------------------- postavitev ---
+     Enoten žleb strani, deljen z vsemi sekcijami.
   --------------------------------------------------------------------- */
   .container-page {
     width: 100%;
@@ -189,8 +256,8 @@
   }
 
   /*
-   * Underline for inline links: sits below the baseline, in a hairline colour,
-   * and firms up to ink on hover. Quieter than a colour swap.
+   * Podčrtaj za povezave v besedilu: pod osnovnico, v barvi lasnice, na hover
+   * potemni do trenutne barve. Tišje od menjave barve.
    */
   .link-underline {
     text-decoration-line: underline;
@@ -203,11 +270,128 @@
   .link-underline:hover {
     text-decoration-color: currentColor;
   }
+
+  .on-light .link-underline {
+    text-decoration-color: var(--color-paper-line);
+  }
+
+  /*
+   * Zelo rahla zrnatost na temnih površinah. Brez nje velike črne ploskve na
+   * OLED zaslonih izgledajo kot luknja; z njo dobijo teksturo tiskovine.
+   */
+  .grain::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /*
+   * Vodoravna vrsta, ki se jo na mobilnem povleče s prstom in se zaskoči.
+   *
+   * Vsebuje SAMO tisto, česar Tailwind ne pokriva. `display`, `overflow` in
+   * `flex-shrink` gredo namenoma v pripomočke na mestu uporabe: ta razred živi
+   * v isti plasti kot Tailwindovi pripomočki in bi zaradi vrstnega reda vira
+   * premagal vsak `lg:grid` ali `lg:overflow-visible` — kar je natanko tista
+   * napaka, zaradi katere je trak dejstev na namizju ostal vodoravno drseč
+   * namesto mreže in si odrezal zadnji stolpec.
+   */
+  .snap-row {
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+  }
+
+  .snap-row::-webkit-scrollbar {
+    display: none;
+  }
+
+  .snap-item {
+    scroll-snap-align: start;
+  }
+
+  /* ------------------------------------------------------------------ gibanje ---
+     Odkrivanje ob drsenju. Privzeto stanje je VIDNO; skrito izhodišče vklopi
+     šele RevealRoot, ko se JS naloži (postavi data-reveal-armed na <html>).
+     Brez JavaScripta tako nič ne izgine.
+  --------------------------------------------------------------------- */
+  [data-reveal-armed] [data-reveal] {
+    transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  [data-reveal-armed] [data-reveal]:not([data-revealed]) {
+    opacity: 0;
+    transform: translateY(1.5rem);
+  }
+
+  [data-reveal-armed] [data-reveal-delay="1"] {
+    transition-delay: 90ms;
+  }
+
+  [data-reveal-armed] [data-reveal-delay="2"] {
+    transition-delay: 180ms;
+  }
+
+  [data-reveal-armed] [data-reveal-delay="3"] {
+    transition-delay: 270ms;
+  }
+
+  /* Kinetični trak dejstev. Dve enaki polovici, premik za natanko eno. */
+  @keyframes ahil-marquee {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+    to {
+      transform: translate3d(-50%, 0, 0);
+    }
+  }
+
+  .marquee-track {
+    display: flex;
+    width: max-content;
+    animation: ahil-marquee 45s linear infinite;
+  }
+
+  /*
+   * Mehko razpiranje domačega <details>, kjer brskalnik pozna
+   * ::details-content. Kjer ga ne pozna, se vsebina preprosto pokaže — zato je
+   * to čista nadgradnja in ne pogoj za delovanje.
+   */
+  @supports selector(::details-content) {
+    details::details-content {
+      block-size: 0;
+      overflow: hidden;
+      transition: block-size 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+        content-visibility 0.3s allow-discrete;
+    }
+
+    details[open]::details-content {
+      block-size: auto;
+    }
+  }
 }
 
+/* ---------------------------------------------------------------------------
+   Zmanjšano gibanje. Vse, kar se premika, se ustavi; vsebina ostane vidna.
+--------------------------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+
+  .marquee-track {
+    animation: none;
+  }
+
+  /* Nobenega skritega izhodišča. */
+  [data-reveal-armed] [data-reveal]:not([data-revealed]) {
+    opacity: 1;
+    transform: none;
   }
 
   *,

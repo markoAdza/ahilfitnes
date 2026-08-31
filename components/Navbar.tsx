@@ -3,22 +3,33 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { ButtonLink } from "@/components/ui/Button";
-import { CloseIcon, MenuIcon, PhoneIcon } from "@/components/ui/Icons";
+import { ArrowUpRightIcon, CloseIcon, MenuIcon, PhoneIcon } from "@/components/ui/Icons";
+import { Label } from "@/components/ui/Label";
 import { nav, site, telHref } from "@/lib/site";
 
 export function Navbar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const sentinel = useRef<HTMLDivElement>(null);
 
-  // Close the mobile panel whenever the route changes.
+  /*
+   * Na domači strani se navigacija začne prosojna nad hero fotografijo in
+   * postane polna, ko sentinel na vrhu dokumenta zapusti zaslon. Na podstraneh
+   * je vedno polna, ker se vsebina začne takoj pod njo.
+   */
+  const overHero = pathname === "/";
+  const solid = !overHero || scrolled || open;
+
+  // Zapri mobilni panel ob vsaki menjavi poti.
   useEffect(() => {
     setOpen(false);
   }, [pathname]);
 
-  // Prevent the page behind the open mobile panel from scrolling.
+  // Prepreči drsenje strani za odprtim panelom.
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
     return () => {
@@ -26,110 +37,190 @@ export function Navbar() {
     };
   }, [open]);
 
+  // Escape zapre panel — pričakovano za vsako celozaslonsko prekritje.
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open]);
+
+  // Sentinel namesto poslušalca drsenja: en dogodek na prehod, ne na piksel.
+  useEffect(() => {
+    const element = sentinel.current;
+    if (!element || !("IntersectionObserver" in window)) {
+      setScrolled(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => setScrolled(!entries[0]?.isIntersecting),
+      { threshold: 0 },
+    );
+
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
+
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname.startsWith(href);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-line bg-white">
-      <div className="container-page flex h-18 items-center justify-between gap-6">
-        <Link href="/" className="shrink-0" aria-label={`${site.name} — home`}>
-          <Image
-            src="/images/logo.png"
-            alt={site.name}
-            width={132}
-            height={148}
-            priority
-            className="h-10 w-auto"
-          />
-        </Link>
+    <>
+      {/*
+       * Sidro na izhodišču dokumenta. Brez pozicioniranega prednika se veže na
+       * začetni vsebovalni blok, torej na vrh strani in ne na zaslon.
+       */}
+      <div
+        ref={sentinel}
+        aria-hidden="true"
+        className="pointer-events-none absolute top-0 left-0 h-16 w-px"
+      />
 
-        {/*
-         * Desktop navigation. Each link fills the navbar height so the active
-         * marker lands exactly on the header hairline, rather than recolouring
-         * the label.
-         */}
-        <nav aria-label="Main" className="hidden lg:block">
-          <ul className="flex items-stretch gap-9">
-            {nav.map((item) => (
-              <li key={item.href} className="flex">
-                <Link
-                  href={item.href}
-                  aria-current={isActive(item.href) ? "page" : undefined}
-                  className={[
-                    "-mb-px inline-flex h-18 items-center border-b-2 text-[0.9375rem] transition-colors",
-                    isActive(item.href)
-                      ? "border-accent font-medium text-ink"
-                      : "border-transparent text-body hover:text-ink",
-                  ].join(" ")}
-                >
-                  {item.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
-
-        <div className="flex items-center gap-2 sm:gap-4">
-          <a
-            href={telHref(site.phone)}
-            className="hidden items-center gap-2 text-[0.9375rem] text-body transition-colors hover:text-ink lg:flex"
+      <header
+        className={[
+          "sticky top-0 z-50 border-b transition-colors duration-300",
+          solid
+            ? "border-line bg-ink/92 backdrop-blur-md"
+            : "border-transparent bg-transparent",
+        ].join(" ")}
+      >
+        <div className="container-page flex h-16 items-center justify-between gap-6">
+          <Link
+            href="/"
+            className="shrink-0"
+            aria-label={`${site.name} — domov`}
           >
-            <PhoneIcon className="size-4 text-muted" />
-            <span className="nums">{site.phone}</span>
-          </a>
+            <Image
+              src="/images/logo.png"
+              alt={site.name}
+              width={132}
+              height={148}
+              priority
+              /* Grafika logotipa je črna na prozornem; na temnem jo obrnemo. */
+              className="h-9 w-auto brightness-0 invert"
+            />
+          </Link>
 
-          {/* Every join path on this site is a phone call, so the button says so. */}
-          <ButtonLink href={telHref(site.phone)}>Call to join</ButtonLink>
+          {/*
+           * Namizna navigacija. Vsaka povezava zapolni višino navigacije, da
+           * oznaka aktivne strani pristane natanko na lasnici pod glavo.
+           */}
+          <nav aria-label="Glavna navigacija" className="hidden lg:block">
+            <ul className="flex items-stretch gap-8">
+              {nav.map((item) => (
+                <li key={item.href} className="flex">
+                  <Link
+                    href={item.href}
+                    aria-current={isActive(item.href) ? "page" : undefined}
+                    className={[
+                      "-mb-px inline-flex h-16 items-center border-b-2 text-[0.9375rem] transition-colors",
+                      isActive(item.href)
+                        ? "border-accent font-medium text-chalk"
+                        : "border-transparent text-body hover:text-chalk",
+                    ].join(" ")}
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
 
-          <button
-            type="button"
-            onClick={() => setOpen((v) => !v)}
-            aria-expanded={open}
-            aria-controls="mobile-nav"
-            aria-label={open ? "Close menu" : "Open menu"}
-            className="-mr-2 rounded-[2px] p-2 text-ink transition-colors hover:bg-sand lg:hidden"
-          >
-            {open ? <CloseIcon className="size-6" /> : <MenuIcon className="size-6" />}
-          </button>
+          <div className="flex items-center gap-2 sm:gap-4">
+            <a
+              href={telHref(site.phone)}
+              className="hidden items-center gap-2 text-[0.9375rem] text-body transition-colors hover:text-chalk lg:flex"
+            >
+              <PhoneIcon className="size-4 text-muted" />
+              <span className="nums">{site.phone}</span>
+            </a>
+
+            {/* Vsaka pot do vpisa na tej strani je klic, zato gumb tako pravi. */}
+            <ButtonLink href={telHref(site.phone)}>Pokliči</ButtonLink>
+
+            <button
+              type="button"
+              onClick={() => setOpen((value) => !value)}
+              aria-expanded={open}
+              aria-controls="mobile-nav"
+              aria-label={open ? "Zapri meni" : "Odpri meni"}
+              className="-mr-2 rounded-[2px] p-2 text-chalk transition-colors hover:bg-ink-3 lg:hidden"
+            >
+              {open ? (
+                <CloseIcon className="size-6" />
+              ) : (
+                <MenuIcon className="size-6" />
+              )}
+            </button>
+          </div>
         </div>
-      </div>
+      </header>
 
-      {/* Mobile panel */}
+      {/*
+       * Mobilno prekritje. Ostane priklopljeno, da postavke lahko stopničasto
+       * vstopijo — iz display:none prehodi ne stečejo. `inert` ga medtem umakne
+       * iz vrstnega reda tabulatorja in iz drevesa dostopnosti.
+       */}
       <div
         id="mobile-nav"
-        hidden={!open}
-        className="border-t border-line bg-white lg:hidden"
+        inert={!open}
+        aria-hidden={!open}
+        className={[
+          "fixed inset-0 z-40 flex flex-col bg-ink pt-16 transition-opacity duration-300 lg:hidden",
+          open ? "opacity-100" : "pointer-events-none opacity-0",
+        ].join(" ")}
       >
-        <nav aria-label="Mobile" className="container-page py-2">
-          <ul className="flex flex-col">
-            {nav.map((item) => (
-              <li key={item.href} className="border-b border-line-soft last:border-b-0">
+        <nav
+          aria-label="Mobilna navigacija"
+          className="container-page flex flex-1 flex-col overflow-y-auto pt-6 pb-8"
+        >
+          <ul className="flex flex-col border-t border-line">
+            {nav.map((item, index) => (
+              <li key={item.href} className="border-b border-line">
                 <Link
                   href={item.href}
                   aria-current={isActive(item.href) ? "page" : undefined}
+                  style={{ transitionDelay: open ? `${60 + index * 45}ms` : "0ms" }}
                   className={[
-                    "flex items-center justify-between py-4 text-base transition-colors",
-                    isActive(item.href) ? "font-medium text-ink" : "text-body",
+                    "flex items-center justify-between gap-4 py-5 transition-all duration-300",
+                    open ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0",
                   ].join(" ")}
                 >
-                  {item.label}
-                  {isActive(item.href) ? (
-                    <span aria-hidden="true" className="size-1.5 bg-accent" />
-                  ) : null}
+                  <span
+                    className={[
+                      "type-h2",
+                      isActive(item.href) ? "text-accent" : "text-chalk",
+                    ].join(" ")}
+                  >
+                    {item.label}
+                  </span>
+                  <ArrowUpRightIcon
+                    aria-hidden="true"
+                    className="size-5 shrink-0 text-muted"
+                  />
                 </Link>
               </li>
             ))}
           </ul>
 
-          <a
-            href={telHref(site.phone)}
-            className="flex items-center gap-2 py-5 text-[0.9375rem] text-body"
-          >
-            <PhoneIcon className="size-4 text-muted" />
-            <span className="nums">{site.phone}</span>
-          </a>
+          <div className="mt-auto pt-10">
+            <Label>Vpis po telefonu</Label>
+            <a
+              href={telHref(site.phone)}
+              className="mt-3 flex items-center gap-3 text-chalk"
+            >
+              <PhoneIcon className="size-5 text-accent" />
+              <span className="nums type-h3">{site.phone}</span>
+            </a>
+            <p className="mt-3 text-sm text-muted">
+              Fitnesi so odprti 24 ur. Recepcija {site.reception}.
+            </p>
+          </div>
         </nav>
       </div>
-    </header>
+    </>
   );
 }

@@ -1,132 +1,195 @@
-# Ahil Fitness
+# Ahil Fitnes
 
-Marketing site for Ahil Fitness — a 24-hour gym with three locations in Hrastnik, Zagorje and
-Sevnica. Built with Next.js 15 (App Router), TypeScript and Tailwind CSS v4.
+Predstavitvena spletna stran za Ahil Fitnes — fitnes, odprt 24 ur, s tremi lokacijami v Hrastniku,
+Zagorju in Sevnici. Zgrajena z Next.js 15 (App Router), TypeScriptom in Tailwind CSS v4.
 
-Four pages: **Home** (`/`), **Equipment** (`/equipment`), **Pricing** (`/pricing`) and
-**FAQ** (`/faq`). Everything prerenders as static HTML — no database, no API, no environment
-variables.
+Stran je **enojezična slovenska**: `lang="sl"`, brez i18n knjižnice in brez slovarjev — nizi so
+prevedeni na mestu, ker je za eno jezikovno različico to najmanj gibljivih delov.
 
-## Local development
+Štiri strani: **Domov** (`/`), **Oprema** (`/oprema`), **Cenik** (`/cenik`) in **Pogosta vprašanja**
+(`/pogosta-vprasanja`). Vse se predrenderira v statični HTML — brez baze, brez API-ja, brez
+okoljskih spremenljivk.
+
+> **Preden gre v produkcijo:** del kontaktnih podatkov je nadomestek in ni resničen. Celoten seznam
+> je v [`PODATKI-ZA-ZAMENJAVO.md`](PODATKI-ZA-ZAMENJAVO.md).
+
+## Lokalni razvoj
 
 ```bash
 npm install
 npm run dev      # http://localhost:3000
 ```
 
-| Script | What it does |
+| Ukaz | Kaj naredi |
 | --- | --- |
-| `npm run dev` | Dev server with hot reload |
-| `npm run build` | Production build (all 4 routes prerender) |
-| `npm start` | Serve the production build |
+| `npm run dev` | Razvojni strežnik s samodejnim osveževanjem |
+| `npm run build` | Produkcijska gradnja (vse 4 poti se predrenderirajo) |
+| `npm start` | Postreže produkcijsko gradnjo |
 | `npm run lint` | ESLint |
 | `npm run typecheck` | `tsc --noEmit` |
 
-## Editing content
+## Urejanje vsebine
 
-All copy, prices and contact details live in [`lib/`](lib/) — you should not need to touch a
-component to change what the site says.
+Vse besedilo, cene in kontaktni podatki živijo v [`lib/`](lib/) — za spremembo tega, kar stran
+pove, se ni treba dotakniti nobene komponente.
 
-| File | Contains |
+| Datoteka | Vsebuje |
 | --- | --- |
-| [`lib/site.ts`](lib/site.ts) | **Phone numbers, addresses, amenities**, reception hours, nav items, social links |
-| [`lib/pricing.ts`](lib/pricing.ts) | The three plans and the grouped price list |
-| [`lib/equipment.ts`](lib/equipment.ts) | The 16 equipment items and the 4 category summaries |
-| [`lib/faq.ts`](lib/faq.ts) | The 10 questions and answers |
+| [`lib/site.ts`](lib/site.ts) | **Telefonske številke, naslove, ugodnosti**, ure recepcije, navigacijo, družbena omrežja, galerijo |
+| [`lib/pricing.ts`](lib/pricing.ts) | Tri članarine in cenik po skupinah |
+| [`lib/equipment.ts`](lib/equipment.ts) | 16 naprav in 4 povzetke kategorij |
+| [`lib/faq.ts`](lib/faq.ts) | 10 vprašanj in odgovorov |
+| [`lib/i18n.ts`](lib/i18n.ts) | Slovenska slovnica: sklanjanje po številu, naštevanje, zapis cen, iskanje brez strešic |
 
-Figures are quoted in one place and read everywhere else: the "from €37 a month" line on Home
-comes from `fromPrice` in `lib/pricing.ts`, the location count comes from `locations.length`, and
-`lib/faq.ts` interpolates `site.phone` instead of repeating it. Change a number in `lib/` and every
-page that mentions it follows.
+Številke so navedene na enem mestu in brane povsod drugod: vrstica »od 37 € na mesec« pride iz
+`fromPrice` v `lib/pricing.ts`, število lokacij iz `locations.length`, `lib/faq.ts` pa vstavi
+`site.phone` namesto da bi ga ponovil. Spremeni številko v `lib/` in vsaka stran, ki jo omenja,
+sledi.
 
-### Placeholder data to replace
+### Slovenska slovnica v kodi
 
-These came from the original design and are **not real**:
+Angleški izvirnik je nize sestavljal kot `` `${n} locations` ``, kar v slovenščini razpade
+(1 lokacija, 2 lokaciji, 3 lokacije, 5 lokacij). [`lib/i18n.ts`](lib/i18n.ts) rešuje štiri stvari,
+ki jih izvirna koda ni imela:
 
-- `site.phone` — `+386 1 234 5678`, used by the navbar and every call to action
-- `site.reception` — the staffed hours quoted on the FAQ page and in the footer
-- The Hrastnik and Zagorje street addresses and phone numbers in `site.locations`
-- Sevnica's photo is a stand-in, so that no two location cards show the same room
+- `plural(n, oblike)` — pravilna oblika po slovenskih pravilih (CLDR). Obliki `forms.mesec` in
+  `forms.mesecLoc` sta **različni**: pri štetju je »6 mesecev«, za predlogom pa »v 6 mesecih«.
+- `listSl([...])` — »a, b **in** c«, brez vejice pred zadnjim členom.
+- `eur(49)` — `49 €` z nedeljivim presledkom, ne `€49`.
+- `fold(besedilo)` — zloži za primerjavo brez strešic, da iskanje »moc« najde »Moč«.
 
-Sevnica's details (`Glavni trg 19, 8290 Sevnica`, `+386 7 816 9012`) came from the design and are
-kept as-is.
+**Pisave morajo vključevati `latin-ext`.** Podnabor `latin` NE vsebuje č, š in ž. Brez njega bi se
+šumniki risali iz sistemske nadomestne pisave — vidno druge črke sredi besede. Nastavljeno je v
+[`app/layout.tsx`](app/layout.tsx).
 
-## Design system
+## Oblikovni sistem
 
-Everything is defined once in [`app/globals.css`](app/globals.css) under `@theme`.
+Vse je definirano enkrat v [`app/globals.css`](app/globals.css) pod `@theme`.
 
-**Colour** — warm near-monochrome. Ink (`#17140f`) and paper carry the design; `sand` is the
-alternating section ground; `line` / `line-soft` are the hairlines that separate blocks and rows.
-There is exactly one accent, a clay red (`--color-accent`, 6.4:1 on white), and it is rationed to
-three jobs: the active navbar underline, the "Recommended" plan label, and link hover. Primary
-buttons are ink, never accent — that is what keeps the accent readable as a signal.
+**Barva** — temna industrijska. Podlaga je topla skoraj-črna v štirih stopnjah (`ink`, `ink-2`,
+`ink-3` in lasnici `line` / `line-soft`), besedilo v treh (`chalk`, `body`, `muted`). Cenik stoji na
+**svetlem otoku** (`paper`, razred `on-light`), ker se 27 vrstic tabelaričnih številk na svetlem
+bere bistveno bolje. Akcent je natanko en, baker (`--color-accent`), in je odmerjen na štiri
+opravila: podčrtaj aktivne navigacije, oznaka »Priporočeno«, aktivni zavihek in števci.
 
-**Type** — two faces with clear roles. Archivo for headings at 500–600, Inter for interface and
-body copy. The scale lives in the `type-display` / `type-h1` / `type-h2` / `type-h3` utilities;
-`type-label` is the only place uppercase is used. Prices and tables set
-`font-variant-numeric: tabular-nums` (the `nums` utility) so columns of figures align.
+Kontrasti so merjeni proti **najsvetlejši podlagi, na kateri se barva pojavi**, ne le proti osnovni:
+`muted` je proti `ink` na 5,7 : 1, na dvignjenih površinah pa na 4,7 : 1. Prvi izbor odtenka je
+padel na 4,36 : 1 in je bil zato zamenjan.
 
-**Shape** — one 2px radius everywhere, and hairline rules rather than borders-plus-shadows. There
-are no filled pill badges: labels are set in `type-label` with no background.
+**Tipografija** — dve vlogi, ena družina za naslove. Archivo je naložena kot **variabilna z osjo
+širine** (`wdth` 62–125), zato displej stopnje uporabijo kondenzirano različico iste pisave
+(`font-stretch: 76–88 %`) brez dodatnega zahtevka. Kondenzacija ni okras: slovenski nizi so
+~15–20 % daljši od angleških in kondenziran displej to pobere brez zmanjšanja velikosti. Inter za
+vmesnik in tekoče besedilo. Lestvica je v pripomočkih `type-mega` / `type-h1` / `type-h2` /
+`type-h3` / `type-stat`; `type-label` je edino mesto z velikimi črkami.
 
-**Rhythm** — sections alternate white and `sand` grounds at `py-20 md:py-28`, and each opens with
-a hairline rule, a `type-label` eyebrow and a left-aligned heading via
-[`SectionHeading`](components/ui/SectionHeading.tsx).
+**Oblika** — en radij 2 px povsod, lasnice namesto obrob s sencami. Nobenih polnjenih tablet.
 
-## Buttons and forms
+**Ritem** — sekcije so `py-16 md:py-24` in vsaka se odpre z lasnico, `type-label` nadnapisom in
+levo poravnanim naslovom prek [`SectionHeading`](components/ui/SectionHeading.tsx), ki lahko izriše
+tudi dvomestno številko sekcije.
 
-There is no backend by design, so nothing can silently fail. Every call to action is a `tel:` link
-to `site.phone`, and the labels say so — **Call to join**, **Call to sign up**, **Talk to us** —
-rather than implying an online signup that does not exist.
+## Interaktivnost
 
-There is no newsletter form. The previous one had no backend and confirmed "you're on the list"
-regardless, which is the one thing a signup form must not do.
+Mobile-first: poteg s prstom je nosilna interakcija, gumbi so krmilje.
 
-## Images
+| Komponenta | Kaj dela |
+| --- | --- |
+| [`motion/RevealRoot`](components/motion/RevealRoot.tsx) | **En** IntersectionObserver za celo stran. Strežniške komponente dodajo le `data-reveal` — brez lastne client meje. |
+| [`motion/Counter`](components/motion/Counter.tsx) | Prešteje navzgor ob vstopu v vidno polje. |
+| [`motion/ParallaxLayer`](components/motion/ParallaxLayer.tsx) | Rahel parallax hero fotografije — edini poslušalec drsenja na strani. |
+| [`motion/useSnapCarousel`](components/motion/useSnapCarousel.ts) | Deljena logika karusela za lokacije in članarine. |
+| [`LocationSwitcher`](components/LocationSwitcher.tsx) | Tri lokacije kot karusel z zaskokom + krmilje s tipkovnico. |
+| [`PlanSwitcher`](components/PlanSwitcher.tsx) | Segmentni preklopnik; prihranek se izračuna iz števil, ne prepiše. |
+| [`EquipmentExplorer`](components/EquipmentExplorer.tsx) | Filter po kategoriji + iskanje po imenih, opisih in specifikacijah. |
+| [`Gallery`](components/Gallery.tsx) | Bento mreža s svetlobno škatlo na domačem `<dialog>`. |
+| [`MapPanel`](components/MapPanel.tsx) | Zemljevid, ki se naloži šele na klik. |
+| [`StickyCallBar`](components/StickyCallBar.tsx) | Lepljiv poziv k akciji na mobilnem, med prvim zaslonom in nogo. |
+| [`ReceptionStatus`](components/ReceptionStatus.tsx) | Živ status recepcije, po uri v Ljubljani. |
 
-The six photos and the logo live in [`public/images/`](public/images/). The original design
-screenshots and source assets are kept in [`images/`](images/) for reference — that folder is
-outside `public/`, so it is never served or bundled.
+### Zakaj brez `tablist` / `tabpanel`
 
-Photography appears only where it carries information: the hero, the three location cards, one
-supporting shot in the Home equipment section, and one per category on `/equipment`. Interior page
-headers are type-only, which is why `/equipment`, `/pricing` and `/faq` have no banner image.
+Preklopnika lokacij in članarin **nista** vzorec tablist: ta bi pomenil, da sta dve od treh plošč
+skriti, in brez JavaScripta bi ostali skriti. Tu so vse plošče vedno v dokumentu in vidne — nosilec
+je vodoravna vrsta z zaskokom, krmilje pa le zadrsa do nje.
 
-## Accessibility and SEO notes
+Iz istega razloga stojijo specifikacije opreme in odgovori na vprašanja v domačem `<details>`:
+`<details name="faq">` da harmoniko z enim odprtim vprašanjem **brez ene vrstice JavaScripta**, past
+za fokus in tipkovnica pa sta vgrajena v brskalnik.
 
-- Nothing is hidden behind hover. Location addresses, phone numbers and equipment specifications
-  are in the DOM and visible at all times, on every device.
-- `/equipment` is fully static: categories are anchors (`#cardio`, `#strength`, …) rather than a
-  client-side filter, so each one is linkable and crawlable without JavaScript.
-- The FAQ accordion is a real `<button>` with `aria-expanded` / `aria-controls`, and the answer
-  panels are labelled regions.
-- The price list is a `<table>` with `scope="colgroup"` group headers and `scope="row"` service
-  names, so it reads correctly in a screen reader.
-- Body text is 7.9:1 on white and the muted tone is 5.6:1; the accent clears 6.4:1, so it is safe
-  for text as well as fills.
-- The FAQ page emits `FAQPage` JSON-LD structured data.
-- Each page sets its own `title`, `description` and OpenGraph tags; the shared template lives in
-  [`app/layout.tsx`](app/layout.tsx).
+### Delovanje brez JavaScripta (preverjeno)
 
-## Deploying
+| Stran | Kaj ostane vidno |
+| --- | --- |
+| `/` | Vseh 11 `data-reveal` elementov, vse 3 lokacije, vse 3 članarine, števci s pravimi vrednostmi |
+| `/oprema` | Vseh 16 naprav in vseh 64 vrstic specifikacij |
+| `/cenik` | Vse 3 članarine in vseh 13 vrstic cenika |
+| `/pogosta-vprasanja` | Vseh 10 vprašanj, prvo odprto |
 
-### 1. Push to GitHub
+Skrito izhodišče za odkrivanje ob drsenju vklopi vgrajena skripta v layoutu, ki teče **pred**
+izrisom (`data-reveal-armed` na `<html>`) — brez JS se ne postavi nič in nič ne izgine.
+
+## Gumbi in obrazci
+
+Zaledja zavestno ni, zato nič ne more tiho odpovedati. Vsak poziv k akciji je `tel:` povezava na
+`site.phone`, in napisi to povedo — **Pokliči**, **Pokliči in se vpiši**, **Pogovori se z nami** —
+namesto da bi namigovali na spletni vpis, ki ne obstaja.
+
+Obrazca za e-novice ni. Prejšnji ni imel zaledja in je vseeno potrdil »na seznamu si«, kar je edina
+stvar, ki je obrazec ne sme narediti.
+
+## Fotografije
+
+Šest posnetkov notranjosti in logotip so v [`public/images/`](public/images/). Posnetki zaslona
+prvotnega osnutka in izvorno gradivo so za referenco v [`images/`](images/) — ta mapa je zunaj
+`public/`, zato se nikoli ne postreže in ne pakira.
+
+Nobena od šestih fotografij ni izrecno vezana na določeno lokacijo, zato vsaka lokacija prikaže
+drugo sobo, da se ista fotografija ne ponovi trikrat. Podrobnosti in priporočilo za fotografiranje
+so v [`PODATKI-ZA-ZAMENJAVO.md`](PODATKI-ZA-ZAMENJAVO.md).
+
+## Dostopnost in SEO
+
+- **Nič ni skrito za hoverjem.** Naslovi, telefonske številke in specifikacije so v DOM-u in vidni
+  ves čas, na vsaki napravi.
+- **Kontrast:** izmerjenih 341 besedilnih vozlišč na štirih straneh, nobene prekoračitve WCAG AA.
+  Tekoče besedilo je 7,7 : 1, `muted` 5,7 : 1, akcent 7,7 : 1 — varen tudi za besedilo, ne le za
+  polnila.
+- **Zmanjšano gibanje:** pod `prefers-reduced-motion: reduce` se ustavijo parallax, trak, števci in
+  odkrivanje ob drsenju; vsebina je takoj vidna.
+- **Zasebnost:** pred klikom na zemljevid ne gre proti Googlu noben zahtevek — preverjeno v
+  omrežnem dnevniku.
+- **Tipkovnica:** karusela se krmilita s puščicami, `Home` in `End`; svetlobna škatla stoji na
+  `<dialog>`, zato ima past za fokus, `Escape` in vračilo fokusa vgrajene.
+- **Cenik** je `<table>` z `scope="colgroup"` in `scope="row"`, zato se pravilno bere v bralniku
+  zaslona.
+- **Strukturirani podatki:** `Organization` (v layoutu), 3× `SportsActivityLocation` z naslovi,
+  telefoni in odprtostjo 24/7 (domača stran), `BreadcrumbList` (podstrani), `FAQPage`.
+- `app/sitemap.ts`, `app/robots.ts` in `app/icon.png` so na mestu; vsaka stran nastavi svoj
+  `title`, `description`, kanonični naslov in OpenGraph.
+- Stare angleške poti (`/equipment`, `/pricing`, `/faq`) so **trajno preusmerjene** (308) na
+  slovenske v [`next.config.ts`](next.config.ts), da nobena deljena povezava ne pripelje na 404.
+
+## Objava
+
+### 1. Na GitHub
 
 ```bash
-# Create an empty repository named "ahil-fitness" on github.com first, then:
-git remote add origin https://github.com/<your-username>/ahil-fitness.git
+# Najprej ustvari prazno repozitorij "ahil-fitnes" na github.com, nato:
+git remote add origin https://github.com/<uporabnisko-ime>/ahil-fitnes.git
 git branch -M main
 git push -u origin main
 ```
 
-### 2. Import on Vercel
+### 2. Uvoz na Vercel
 
-1. Go to [vercel.com/new](https://vercel.com/new) and pick the `ahil-fitness` repository.
-2. Accept the defaults — Vercel detects Next.js on its own. There are no environment variables
-   and no build settings to change.
-3. Deploy. Every later push to `main` redeploys automatically.
+1. Pojdi na [vercel.com/new](https://vercel.com/new) in izberi repozitorij.
+2. Sprejmi privzete nastavitve — Vercel sam zazna Next.js. Okoljskih spremenljivk in nastavitev
+   gradnje ni.
+3. Objavi. Vsak nadaljnji `push` na `main` samodejno posodobi stran.
 
-### 3. After the first deploy
+### 3. Po prvi objavi
 
-Set `site.url` in [`lib/site.ts`](lib/site.ts) to the real domain. It is used for canonical URLs
-and OpenGraph tags, so social previews will be wrong until it matches the live address.
+Nastavi `site.url` v [`lib/site.ts`](lib/site.ts) na pravo domeno. Uporablja se za kanonične
+naslove, `sitemap.xml`, `robots.txt` in OpenGraph, zato bodo predogledi ob deljenju napačni, dokler
+se ne ujema z živim naslovom.

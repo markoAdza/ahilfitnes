@@ -1,13 +1,21 @@
 /**
- * Equipment catalogue - 16 items, 4 per category, so every filter on
- * /equipment renders a full row rather than a sparse one.
+ * Katalog opreme — 16 naprav, štiri na kategorijo, da vsak filter na /oprema
+ * izriše polno vrsto in ne razpršene.
  *
- * The Cardio entries and the Strength names/blurbs come from the original
- * design; Functional and Recovery are written to match the same voice.
+ * Kategorije nosijo eksplicitni `slug`: kotve v URL-ju so `#kardio`, `#moc`,
+ * ... in ne izpeljane iz imena z `.toLowerCase()`, da v naslov nikoli ne
+ * pridejo šumniki.
  */
 
-export const categories = ["Cardio", "Strength", "Functional", "Recovery"] as const;
-export type Category = (typeof categories)[number];
+export const categories = [
+  { name: "Kardio", slug: "kardio" },
+  { name: "Moč", slug: "moc" },
+  { name: "Funkcionalno", slug: "funkcionalno" },
+  { name: "Regeneracija", slug: "regeneracija" },
+] as const;
+
+export type Category = (typeof categories)[number]["name"];
+export type CategorySlug = (typeof categories)[number]["slug"];
 
 export type EquipmentItem = {
   slug: string;
@@ -18,242 +26,262 @@ export type EquipmentItem = {
 };
 
 export const equipment: EquipmentItem[] = [
-  // ---------------------------------------------------------------- Cardio
+  // ---------------------------------------------------------------- Kardio
   {
-    slug: "treadmills",
-    name: "Treadmills",
-    category: "Cardio",
+    slug: "tekalne-steze",
+    name: "Tekalne steze",
+    category: "Kardio",
     blurb:
-      "Professional-grade treadmills with advanced cushioning and incline features",
+      "Profesionalne tekalne steze z naprednim blaženjem in nastavljivim naklonom",
     specs: [
-      "12 units across all locations",
-      "Incline up to 15%, decline to -3%",
-      "Shock-absorbing deck reduces joint impact",
-      "Built-in heart-rate and programme tracking",
+      "12 naprav po vseh treh lokacijah",
+      "Naklon do 15 %, spust do −3 %",
+      "Blažilna deska razbremeni sklepe",
+      "Vgrajeno merjenje srčnega utripa in programi",
     ],
   },
   {
-    slug: "elliptical-trainers",
-    name: "Elliptical trainers",
-    category: "Cardio",
-    blurb: "Low-impact cardio machines for full-body workouts",
+    slug: "elipticni-trenazerji",
+    name: "Eliptični trenažerji",
+    category: "Kardio",
+    blurb: "Vadba za celo telo z majhno obremenitvijo sklepov",
     specs: [
-      "Front and rear-drive models available",
-      "20 levels of magnetic resistance",
-      "Moving handlebars engage the upper body",
-      "Ideal for joint-friendly conditioning",
+      "Modeli s prednjim in zadnjim pogonom",
+      "20 stopenj magnetnega upora",
+      "Premični ročaji vključijo zgornji del telesa",
+      "Primerni za vadbo, prijazno sklepom",
     ],
   },
   {
-    slug: "rowing-machines",
-    name: "Rowing machines",
-    category: "Cardio",
-    blurb: "Water and air resistance rowers for complete cardio training",
+    slug: "veslaski-trenazerji",
+    name: "Veslaški trenažerji",
+    category: "Kardio",
+    blurb: "Zračni in vodni veslači za celovito kardio vadbo",
     specs: [
-      "Both air and water resistance models",
-      "Works 86% of your muscle mass",
-      "Live split, pace and watt readouts",
-      "Interval programmes preloaded",
+      "Modeli z zračnim in vodnim uporom",
+      "Aktivirajo 86 % mišične mase",
+      "Prikaz tempa, razdelka in vatov v živo",
+      "Prednaloženi intervalni programi",
     ],
   },
   {
-    slug: "stationary-bikes",
-    name: "Stationary bikes",
-    category: "Cardio",
-    blurb: "Upright and recumbent bikes with digital tracking",
+    slug: "sobna-kolesa",
+    name: "Sobna kolesa",
+    category: "Kardio",
+    blurb: "Pokončna in ležeča kolesa z digitalnim merjenjem",
     specs: [
-      "Upright, recumbent and spin options",
-      "Magnetic resistance, near-silent",
-      "Fully adjustable seat and bar height",
-      "Watt, cadence and calorie display",
-    ],
-  },
-
-  // -------------------------------------------------------------- Strength
-  {
-    slug: "free-weights",
-    name: "Free weights",
-    category: "Strength",
-    blurb: "Full dumbbell and plate range for every level of lifter",
-    specs: [
-      "Dumbbells from 2 kg to 60 kg",
-      "Olympic bars and bumper plates",
-      "Adjustable benches at every rack",
-      "Dedicated lifting platform",
-    ],
-  },
-  {
-    slug: "cable-machines",
-    name: "Cable machines",
-    category: "Strength",
-    blurb: "Dual-adjustable pulleys for unlimited movement variety",
-    specs: [
-      "Dual adjustable pulley stations",
-      "Full attachment library on site",
-      "Smooth 2:1 ratio weight stacks",
-      "Cross-over and functional set-ups",
-    ],
-  },
-  {
-    slug: "smith-machine",
-    name: "Smith machine",
-    category: "Strength",
-    blurb: "Guided barbell work with safety catches at every height",
-    specs: [
-      "Linear bearing guided bar path",
-      "Multi-position safety catches",
-      "Train heavy without a spotter",
-      "Squat, press and shrug ready",
-    ],
-  },
-  {
-    slug: "leg-press",
-    name: "Leg press",
-    category: "Strength",
-    blurb: "Plate-loaded leg press and hack squat for lower-body power",
-    specs: [
-      "45-degree plate-loaded press",
-      "Takes loads beyond 400 kg",
-      "Adjustable back pad and foot plate",
-      "Hack squat conversion available",
+      "Pokončna, ležeča in spinning izvedba",
+      "Magnetni upor, skoraj neslišna",
+      "Popolnoma nastavljiv sedež in višina krmila",
+      "Prikaz vatov, kadence in porabe",
     ],
   },
 
-  // ------------------------------------------------------------ Functional
+  // -------------------------------------------------------------------- Moč
   {
-    slug: "kettlebells",
-    name: "Kettlebells",
-    category: "Functional",
-    blurb: "Competition-grade bells for swings, cleans and carries",
+    slug: "proste-utezi",
+    name: "Proste uteži",
+    category: "Moč",
+    blurb: "Celoten razpon ročk in uteži za vsako raven",
     specs: [
-      "4 kg to 48 kg in even steps",
-      "Uniform competition dimensions",
-      "Open turf area for swings",
-      "Powder-coated grip finish",
+      "Ročke od 2 kg do 60 kg",
+      "Olimpijske droge in gumirane uteži",
+      "Nastavljive klopi pri vsakem stojalu",
+      "Namenska dvigalna ploščad",
     ],
   },
   {
-    slug: "battle-ropes",
-    name: "Battle ropes",
-    category: "Functional",
-    blurb: "High-intensity conditioning ropes with anchored stations",
+    slug: "kabelski-trenazerji",
+    name: "Kabelski trenažerji",
+    category: "Moč",
+    blurb: "Dvojno nastavljiva škripca za neomejeno izbiro gibov",
     specs: [
-      "15 m heavy-duty ropes",
-      "Floor-anchored stations",
-      "Built for HIIT finishers",
-      "Two stations per location",
+      "Postaje z dvema nastavljivima škripcema",
+      "Celotna zbirka nastavkov na mestu",
+      "Gladki sklopi uteži v razmerju 2:1",
+      "Postavitve za cross-over in funkcionalno vadbo",
     ],
   },
   {
-    slug: "plyo-boxes",
-    name: "Plyo boxes",
-    category: "Functional",
-    blurb: "Soft and wooden boxes for explosive jump training",
+    slug: "smithova-naprava",
+    name: "Smithova naprava",
+    category: "Moč",
+    blurb: "Vodena vadba z drogom in varovali na vsaki višini",
     specs: [
-      "Heights from 30 cm to 75 cm",
-      "Soft-foam and timber options",
-      "Non-slip landing surface",
-      "Stackable for custom heights",
+      "Vodena pot droga na linearnih ležajih",
+      "Varovala v več položajih",
+      "Vadiš težko tudi brez pomočnika",
+      "Pripravljena za počepe, potiske in dvige ramen",
     ],
   },
   {
-    slug: "suspension-trainers",
-    name: "TRX suspension trainers",
-    category: "Functional",
-    blurb: "Bodyweight suspension training for core and stability",
+    slug: "potisk-nog",
+    name: "Naprava za potisk nog",
+    category: "Moč",
+    blurb: "Potisk nog in hack počep za moč spodnjega dela telesa",
     specs: [
-      "Ceiling-mounted anchor points",
-      "Scales from beginner to advanced",
-      "Core, pull and mobility work",
-      "Rig space for four users",
+      "Potisk pod 45 stopinjami, nakladanje z utežmi",
+      "Prenese obremenitve nad 400 kg",
+      "Nastavljiva hrbtna blazina in podnožje",
+      "Možna pretvorba v hack počep",
     ],
   },
 
-  // -------------------------------------------------------------- Recovery
+  // ------------------------------------------------------------ Funkcionalno
   {
-    slug: "foam-rolling",
-    name: "Foam rolling zone",
-    category: "Recovery",
-    blurb: "Rollers, balls and bands for self-myofascial release",
+    slug: "kettlebelli",
+    name: "Kettlebelli",
+    category: "Funkcionalno",
+    blurb: "Tekmovalne girje za zamahe, nalaganja in nošenja",
     specs: [
-      "Smooth and textured rollers",
-      "Lacrosse and peanut balls",
-      "Resistance bands in all strengths",
-      "Guided routines posted on the wall",
+      "Od 4 kg do 48 kg v enakomernih korakih",
+      "Enotne tekmovalne mere",
+      "Odprta površina z umetno travo za zamahe",
+      "Prašno barvan oprijem",
     ],
   },
   {
-    slug: "stretching-area",
-    name: "Stretching area",
-    category: "Recovery",
-    blurb: "Matted open floor for mobility and cool-down work",
+    slug: "bojne-vrvi",
+    name: "Bojne vrvi",
+    category: "Funkcionalno",
+    blurb: "Vrvi za intenzivno kondicijsko vadbo s pritrjenimi postajami",
     specs: [
-      "Cushioned matted flooring",
-      "Full-length mirrors",
-      "Mobility rig with bands",
-      "Quiet zone away from the racks",
+      "Vrvi dolžine 15 m",
+      "Postaje, pritrjene v tla",
+      "Narejene za zaključke vadbe HIIT",
+      "Dve postaji na lokacijo",
     ],
   },
   {
-    slug: "massage-room",
-    name: "Massage room",
-    category: "Recovery",
-    blurb: "Private sports-massage room with certified therapists",
+    slug: "pliometricne-skrinje",
+    name: "Pliometrične skrinje",
+    category: "Funkcionalno",
+    blurb: "Mehke in lesene skrinje za eksplozivne skoke",
     specs: [
-      "Certified sports therapists",
-      "60-minute sessions available",
-      "Bookable in Hrastnik and Sevnica",
-      "Reserve at reception or by phone",
+      "Višine od 30 cm do 75 cm",
+      "Izvedba iz mehke pene in lesa",
+      "Nedrseča površina za pristanek",
+      "Zložljive za poljubno višino",
     ],
   },
   {
-    slug: "sauna",
-    name: "Sauna",
-    category: "Recovery",
-    blurb: "Finnish sauna to unwind and speed up recovery",
+    slug: "trx-trakovi",
+    name: "TRX vadbeni trakovi",
+    category: "Funkcionalno",
+    blurb: "Vadba z lastno telesno težo za trup in stabilnost",
     specs: [
-      "Traditional Finnish dry heat",
-      "Included with every membership",
-      "Towel service available as an add-on",
-      "Next to the shower facilities",
+      "Pritrdišča na stropu",
+      "Od začetnika do napredne ravni",
+      "Vaje za trup, poteg in gibljivost",
+      "Prostor za štiri uporabnike",
+    ],
+  },
+
+  // ------------------------------------------------------------ Regeneracija
+  {
+    slug: "masazni-valji",
+    name: "Cona z masažnimi valji",
+    category: "Regeneracija",
+    blurb: "Valji, žogice in elastike za samomasažo",
+    specs: [
+      "Gladki in strukturirani valji",
+      "Trde in dvojne masažne žogice",
+      "Elastike vseh trdot",
+      "Vodena rutina, izobešena na steni",
+    ],
+  },
+  {
+    slug: "prostor-za-razteg",
+    name: "Prostor za razteg",
+    category: "Regeneracija",
+    blurb: "Odprta tla s podlogami za gibljivost in ohlajanje",
+    specs: [
+      "Blazinjena talna podloga",
+      "Zrcala v polni višini",
+      "Stojalo z elastikami za gibljivost",
+      "Tiho območje stran od stojal",
+    ],
+  },
+  {
+    slug: "prostor-za-masazo",
+    name: "Prostor za masažo",
+    category: "Regeneracija",
+    blurb: "Zaseben prostor za športno masažo z usposobljenimi maserji",
+    specs: [
+      "Usposobljeni športni maserji",
+      "Na voljo 60-minutni termini",
+      "Rezervacija v Hrastniku in Sevnici",
+      "Naročiš se na recepciji ali po telefonu",
+    ],
+  },
+  {
+    slug: "savna",
+    name: "Savna",
+    category: "Regeneracija",
+    blurb: "Finska savna za sprostitev in hitrejšo regeneracijo",
+    specs: [
+      "Klasična finska suha toplota",
+      "Vključena v vsako članarino",
+      "Najem brisač na voljo kot doplačilo",
+      "Takoj ob prhah",
     ],
   },
 ];
 
-/** The four category cards in the Home page bento grid. */
+/** Štiri kategorije, kot se pojavijo na domači strani in v katalogu. */
 export const categoryShowcase: {
   category: Category;
+  slug: CategorySlug;
   image: string;
   focus: string;
   highlights: string[];
 }[] = [
   {
-    category: "Cardio",
+    category: "Kardio",
+    slug: "kardio",
     image: "/images/cardio.jpg",
     focus: "center",
     highlights: [
-      "Treadmills",
-      "Elliptical trainers",
-      "Rowing machines",
-      "Stationary bikes",
+      "Tekalne steze",
+      "Eliptični trenažerji",
+      "Veslaški trenažerji",
+      "Sobna kolesa",
     ],
   },
   {
-    category: "Strength",
+    category: "Moč",
+    slug: "moc",
     image: "/images/strength.jpg",
     focus: "center",
-    highlights: ["Free weights", "Cable machines", "Smith machine", "Leg press"],
+    highlights: [
+      "Proste uteži",
+      "Kabelski trenažerji",
+      "Smithova naprava",
+      "Naprava za potisk nog",
+    ],
   },
   {
-    category: "Functional",
+    category: "Funkcionalno",
+    slug: "funkcionalno",
     image: "/images/hrastnik.jpg",
     focus: "center",
-    highlights: ["Kettlebells", "Battle ropes", "Plyo boxes", "TRX suspension trainers"],
+    highlights: [
+      "Kettlebelli",
+      "Bojne vrvi",
+      "Pliometrične skrinje",
+      "TRX vadbeni trakovi",
+    ],
   },
   {
-    category: "Recovery",
+    category: "Regeneracija",
+    slug: "regeneracija",
     image: "/images/sevnica.jpg",
     focus: "right",
-    highlights: ["Foam rolling zone", "Stretching area", "Massage room", "Sauna"],
+    highlights: [
+      "Cona z masažnimi valji",
+      "Prostor za razteg",
+      "Prostor za masažo",
+      "Savna",
+    ],
   },
 ];

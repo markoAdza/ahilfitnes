@@ -1,18 +1,21 @@
 import type { ReactNode } from "react";
 
-type Tone = "muted" | "accent" | "light";
+type Tone = "muted" | "accent" | "light" | "onLight";
 
 const tones: Record<Tone, string> = {
   muted: "text-muted",
   accent: "text-accent",
-  light: "text-white/60",
+  /** Nad fotografijo, kjer je podlaga negotova. */
+  light: "text-white/65",
+  /** Na svetlem otoku (cenik), kjer bi `muted` izginil. */
+  onLight: "text-ink/55",
 };
 
 /**
- * Micro-label — the eyebrow above a heading, a category name, a "Recommended"
- * marker. Replaces the filled pill badges the old design used: at this size the
- * letter-spacing and the colour are enough to mark it as a label, and nothing
- * competes with the heading underneath.
+ * Mikro oznaka — nadnapis nad naslovom, ime kategorije, oznaka "Priporočeno".
+ * Nadomešča polnjene tablete iz prvotnega osnutka: pri tej velikosti sta razmik
+ * med črkami in barva dovolj, da se bere kot oznaka, in nič ne tekmuje z
+ * naslovom pod njo.
  */
 export function Label({
   tone = "muted",
@@ -21,7 +24,7 @@ export function Label({
   children,
 }: {
   tone?: Tone;
-  as?: "p" | "span" | "h2" | "div";
+  as?: "p" | "span" | "h2" | "h3" | "h4" | "div" | "dt";
   className?: string;
   children: ReactNode;
 }) {

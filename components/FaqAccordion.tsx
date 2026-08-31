@@ -1,69 +1,43 @@
-"use client";
-
-import { useState } from "react";
-
 import { ChevronDownIcon } from "@/components/ui/Icons";
 import { faqs } from "@/lib/faq";
 
 /**
- * Hairline-separated disclosure list.
+ * Seznam vprašanj, ločen z lasnicami.
  *
- * The rows used to be individually bordered, rounded cards with a shadow on the
- * open one, which made ten questions look like ten unrelated objects. A single
- * ruled list reads as one document.
+ * Stoji na domačem `<details>` z atributom `name`: brskalnik sam poskrbi, da je
+ * odprto le eno vprašanje hkrati, in to brez ene vrstice JavaScripta. Prejšnja
+ * različica je bila client komponenta z `useState`, kar je pomenilo, da je bilo
+ * brez JS vidnih devet vprašanj brez odgovorov.
+ *
+ * Kjer brskalnik `name` še ne pozna, se lahko odpre več vprašanj hkrati — kar
+ * je popolnoma sprejemljiv izid in ne napaka.
+ *
+ * Vrstice so bile v prvotnem osnutku posamično obrobljene zaobljene kartice s
+ * senco na odprti, zaradi česar je deset vprašanj izgledalo kot deset
+ * nepovezanih predmetov. Ena črtasta lista se bere kot en dokument.
  */
 export function FaqAccordion() {
-  // First item open on load.
-  const [open, setOpen] = useState<number | null>(0);
-
   return (
     <ul className="border-t border-line">
-      {faqs.map((faq, index) => {
-        const isOpen = open === index;
-        const panelId = `faq-panel-${index}`;
-        const buttonId = `faq-button-${index}`;
+      {faqs.map((faq, index) => (
+        <li key={faq.question} className="border-b border-line">
+          <details name="faq" open={index === 0} className="group">
+            <summary className="flex cursor-pointer items-start justify-between gap-6 py-6 [&::-webkit-details-marker]:hidden">
+              <h3 className="type-h3 text-chalk transition-colors group-hover:text-accent group-open:text-chalk">
+                {faq.question}
+              </h3>
+              <ChevronDownIcon
+                aria-hidden="true"
+                className="mt-1 size-5 shrink-0 text-muted transition-transform duration-200 group-open:-rotate-180"
+              />
+            </summary>
 
-        return (
-          <li key={faq.question} className="border-b border-line">
-            <h3>
-              <button
-                id={buttonId}
-                type="button"
-                aria-expanded={isOpen}
-                aria-controls={panelId}
-                onClick={() => setOpen(isOpen ? null : index)}
-                className="group flex w-full items-start justify-between gap-6 py-6 text-left"
-              >
-                <span
-                  className={[
-                    "type-h3 transition-colors",
-                    isOpen ? "text-ink" : "text-ink group-hover:text-accent",
-                  ].join(" ")}
-                >
-                  {faq.question}
-                </span>
-                <ChevronDownIcon
-                  aria-hidden="true"
-                  className={[
-                    "mt-1 size-5 shrink-0 text-muted transition-transform duration-200",
-                    isOpen ? "-rotate-180" : "",
-                  ].join(" ")}
-                />
-              </button>
-            </h3>
-
-            <div
-              id={panelId}
-              role="region"
-              aria-labelledby={buttonId}
-              hidden={!isOpen}
-              className="pb-7"
-            >
+            <div className="pb-7">
               <p className="max-w-3xl text-body">{faq.answer}</p>
             </div>
-          </li>
-        );
-      })}
+          </details>
+        </li>
+      ))}
     </ul>
   );
 }

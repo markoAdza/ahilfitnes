@@ -1,79 +1,92 @@
 /**
- * Every price on the site lives here, so the Home rate card and the /pricing
- * page can never drift apart. Figures are taken from the original design.
+ * Vse cene na strani živijo tu, da se cenik na domači strani in cenik na
+ * /cenik nikoli ne razideta. Zneski so prevzeti iz prvotnega osnutka.
+ *
+ * Zneski so števila, ne nizi: `eur()` iz lib/i18n.ts jih izpiše po slovenski
+ * konvenciji (`49 €`), prihranke pa preklopnik paketov izračuna, da se
+ * besedilo ne more razlikovati od številke.
  */
 
 export type Plan = {
   slug: string;
   name: string;
-  /** Effective monthly cost, in euros. */
+  /** Dolžina zaveze v mesecih. 1 = mesečna, ki se obnavlja. */
+  months: number;
+  /** Efektivna cena na mesec, v evrih. */
   monthly: number;
-  /** Total paid upfront. Null for the rolling monthly plan. */
+  /** Skupni znesek, plačan vnaprej. Null pri mesečni članarini. */
   upfront: number | null;
-  /** How the plan is billed, in plain words. */
+  /** Kako se članarina obračuna, v preprostih besedah. */
   billing: string;
-  /** Saving against the rolling monthly rate, e.g. "Save €42 a year". */
-  save: string | null;
-  /** Marks the plan the gym points people at. One at most. */
+  /** Prihranek glede na mesečno ceno, v evrih. Null, kadar ga ni. */
+  savings: number | null;
+  /** Označi članarino, na katero fitnes usmerja ljudi. Največ ena. */
   recommended: boolean;
   features: string[];
 };
 
 export const plans: Plan[] = [
   {
-    slug: "monthly",
-    name: "Monthly",
+    slug: "mesecno",
+    name: "Mesečno",
+    months: 1,
     monthly: 49,
     upfront: null,
-    billing: "Billed monthly, cancel any time",
-    save: null,
+    billing: "Obračun vsak mesec, prekineš kadar koli",
+    savings: null,
     recommended: false,
     features: [
-      "24-hour access to all three gyms",
-      "Locker room and showers",
-      "Sauna",
-      "Free WiFi",
+      "24-urni dostop do vseh treh fitnesov",
+      "Garderoba in prhe",
+      "Savna",
+      "Brezplačen WiFi",
     ],
   },
   {
-    slug: "6-months",
-    name: "6 months",
+    slug: "6-mesecev",
+    name: "6 mesecev",
+    months: 6,
     monthly: 42,
     upfront: 252,
-    billing: "€252 paid upfront",
-    save: "Save €42 over six months",
+    billing: "252 € plačaš vnaprej",
+    savings: 42,
     recommended: true,
     features: [
-      "Everything in Monthly",
-      "Fitness assessment when you join",
-      "Nutrition guide",
-      "Two guest passes a month",
+      "Vse iz mesečne članarine",
+      "Ocena telesne pripravljenosti ob vpisu",
+      "Vodnik po prehrani",
+      "Dve vstopnici za goste na mesec",
     ],
   },
   {
-    slug: "annual",
-    name: "12 months",
+    slug: "12-mesecev",
+    name: "12 mesecev",
+    months: 12,
     monthly: 37,
     upfront: 444,
-    billing: "€444 paid upfront",
-    save: "Save €144 over the year",
+    billing: "444 € plačaš vnaprej",
+    savings: 144,
     recommended: false,
     features: [
-      "Everything in 6 months",
-      "One personal training session a month",
-      "Unlimited guest passes",
-      "Member events",
+      "Vse iz 6-mesečne članarine",
+      "En osebni trening na mesec",
+      "Neomejene vstopnice za goste",
+      "Dogodki za člane",
     ],
   },
 ];
 
-/** Cheapest effective monthly rate, quoted on the Home page. */
+/** Najnižja efektivna mesečna cena, navedena na domači strani. */
 export const fromPrice = Math.min(...plans.map((plan) => plan.monthly));
+
+/** Cena dnevne vstopnice — navedena na več mestih, zato stoji tu. */
+export const dayPassPrice = 15;
 
 export type PriceRow = {
   service: string;
-  price: string;
-  /** Small note under the service name — billing detail or saving. */
+  /** Znesek v evrih; izpis prek `eur()`. */
+  price: number;
+  /** Drobna opomba pod imenom storitve — podrobnost obračuna ali prihranek. */
   note?: string;
 };
 
@@ -83,44 +96,44 @@ export type PriceGroup = {
 };
 
 /**
- * The full price list, grouped.
+ * Celoten cenik, po skupinah.
  *
- * This replaces the old flat table plus a second "Add-ons" section that listed
- * the same twelve figures again — one grouped list is shorter to read and
- * leaves nothing to contradict itself.
+ * To nadomešča prejšnjo ravno tabelo in drugo sekcijo "Dodatne storitve", ki je
+ * navajala istih dvanajst zneskov znova — ena skupinska tabela je krajša za
+ * branje in si ne more nasprotovati.
  */
 export const priceGroups: PriceGroup[] = [
   {
-    title: "Membership",
+    title: "Članarina",
     rows: [
-      { service: "Monthly", price: "€49", note: "Rolling, cancel any time" },
-      { service: "6 months", price: "€252", note: "Works out at €42 a month" },
-      { service: "12 months", price: "€444", note: "Works out at €37 a month" },
-      { service: "Day pass", price: "€15", note: "Walk-ins and guests" },
+      { service: "Mesečno", price: 49, note: "Se obnavlja, prekineš kadar koli" },
+      { service: "6 mesecev", price: 252, note: "Znese 42 € na mesec" },
+      { service: "12 mesecev", price: 444, note: "Znese 37 € na mesec" },
+      { service: "Dnevna vstopnica", price: 15, note: "Za obiskovalce in goste" },
     ],
   },
   {
-    title: "Personal training",
+    title: "Osebni trening",
     rows: [
-      { service: "One session", price: "€45" },
-      { service: "Five sessions", price: "€200", note: "Saves €25" },
-      { service: "Ten sessions", price: "€380", note: "Saves €70" },
+      { service: "En trening", price: 45 },
+      { service: "Pet treningov", price: 200, note: "Prihraniš 25 €" },
+      { service: "Deset treningov", price: 380, note: "Prihraniš 70 €" },
     ],
   },
   {
-    title: "Group classes",
+    title: "Skupinske vadbe",
     rows: [
-      { service: "Drop-in", price: "€15" },
-      { service: "Ten-class pack", price: "€120", note: "Saves €30" },
-      { service: "Unlimited, per month", price: "€80" },
+      { service: "Posamezna vadba", price: 15 },
+      { service: "Paket desetih vadb", price: 120, note: "Prihraniš 30 €" },
+      { service: "Neomejeno, na mesec", price: 80 },
     ],
   },
   {
-    title: "Extras",
+    title: "Dodatno",
     rows: [
-      { service: "Locker rental, per month", price: "€10" },
-      { service: "Towel service, per month", price: "€15" },
-      { service: "Massage therapy, 60 minutes", price: "€60" },
+      { service: "Najem omarice, na mesec", price: 10 },
+      { service: "Najem brisač, na mesec", price: 15 },
+      { service: "Masaža, 60 minut", price: 60 },
     ],
   },
 ];
