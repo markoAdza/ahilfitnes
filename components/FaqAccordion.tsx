@@ -12,9 +12,7 @@ import { faqs } from "@/lib/faq";
  * Kjer brskalnik `name` še ne pozna, se lahko odpre več vprašanj hkrati — kar
  * je popolnoma sprejemljiv izid in ne napaka.
  *
- * Vrstice so bile v prvotnem osnutku posamično obrobljene zaobljene kartice s
- * senco na odprti, zaradi česar je deset vprašanj izgledalo kot deset
- * nepovezanih predmetov. Ena črtasta lista se bere kot en dokument.
+ * Ena črtasta lista se bere kot en dokument, ne kot kup nepovezanih kartic.
  */
 export function FaqAccordion() {
   return (
@@ -23,12 +21,12 @@ export function FaqAccordion() {
         <li key={faq.question} className="border-b border-line">
           <details name="faq" open={index === 0} className="group">
             <summary className="flex cursor-pointer items-start justify-between gap-6 py-6 [&::-webkit-details-marker]:hidden">
-              <h3 className="type-h3 text-chalk transition-colors group-hover:text-accent group-open:text-chalk">
+              <h3 className="type-h3 text-[1.25rem] text-chalk transition-colors group-hover:text-accent-bright group-open:text-chalk">
                 {faq.question}
               </h3>
               <ChevronDownIcon
                 aria-hidden="true"
-                className="mt-1 size-5 shrink-0 text-muted transition-transform duration-200 group-open:-rotate-180"
+                className="mt-1 size-5 shrink-0 text-accent transition-transform duration-200 group-open:-rotate-180"
               />
             </summary>
 

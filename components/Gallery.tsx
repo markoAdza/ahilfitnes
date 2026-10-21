@@ -25,6 +25,9 @@ const spans = [
 /**
  * Galerija s svetlobno škatlo.
  *
+ * Fotografije so nadomestne (Unsplash), zato sekcija ne trdi, da prikazujejo
+ * fitnese Ahil — ko stranka dostavi prave, se zamenjajo v lib/site.ts.
+ *
  * Škatla stoji na domačem `<dialog>`, ne na ročno sestavljenem prekritju: past
  * za fokus, Escape in vračilo fokusa na sprožilni gumb so vgrajeni v brskalnik
  * in jih ni treba (in ni pametno) pisati na novo. Dodane so le puščice,
@@ -67,14 +70,9 @@ export function Gallery({ sectionIndex }: { sectionIndex?: number }) {
   const current = gallery[index];
 
   return (
-    <section className="py-16 md:py-24">
+    <section className="py-20 md:py-24">
       <div className="container-page">
-        <SectionHeading
-          index={sectionIndex}
-          label="Galerija"
-          title="Prostori, kot so"
-          intro="Fotografije so iz naših treh fitnesov, brez postavljanja in brez opreme, ki je nimamo."
-        />
+        <SectionHeading index={sectionIndex} title="Galerija" />
 
         <ul
           className="mt-12 grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-12 lg:grid-rows-[repeat(3,12rem)]"
@@ -100,7 +98,12 @@ export function Gallery({ sectionIndex }: { sectionIndex?: number }) {
                     alt={photo.alt}
                     fill
                     sizes="(min-width: 1024px) 45vw, 50vw"
-                    className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                    style={"focus" in photo ? { objectPosition: photo.focus } : undefined}
+                    className="object-cover opacity-85 grayscale transition-transform duration-700 group-hover:scale-[1.04]"
+                  />
+                  <span
+                    aria-hidden="true"
+                    className="absolute inset-0 bg-accent-deep opacity-20 mix-blend-color"
                   />
                 </span>
 
@@ -150,13 +153,13 @@ export function Gallery({ sectionIndex }: { sectionIndex?: number }) {
               alt={current.alt}
               fill
               sizes="100vw"
-              className="object-contain"
+              className="object-contain grayscale"
             />
           </div>
 
           <div className="flex items-center justify-between gap-4">
-            <p className="max-w-md text-sm text-white/70">
-              <span className="nums mr-2 text-white">
+            <p className="max-w-md text-sm text-chalk/70">
+              <span className="nums mr-2 text-chalk">
                 {index + 1} / {gallery.length}
               </span>
               {current.alt}
@@ -167,7 +170,7 @@ export function Gallery({ sectionIndex }: { sectionIndex?: number }) {
                 type="button"
                 onClick={() => step(-1)}
                 aria-label="Prejšnja fotografija"
-                className="inline-flex size-11 items-center justify-center rounded-[2px] border border-white/35 text-white transition-colors hover:bg-white/10"
+                className="inline-flex size-11 items-center justify-center rounded-[2px] border border-chalk/35 text-chalk transition-colors hover:border-accent-bright hover:text-accent-bright"
               >
                 <ChevronLeftIcon className="size-5" />
               </button>
@@ -175,7 +178,7 @@ export function Gallery({ sectionIndex }: { sectionIndex?: number }) {
                 type="button"
                 onClick={() => step(1)}
                 aria-label="Naslednja fotografija"
-                className="inline-flex size-11 items-center justify-center rounded-[2px] border border-white/35 text-white transition-colors hover:bg-white/10"
+                className="inline-flex size-11 items-center justify-center rounded-[2px] border border-chalk/35 text-chalk transition-colors hover:border-accent-bright hover:text-accent-bright"
               >
                 <ChevronRightIcon className="size-5" />
               </button>
@@ -183,7 +186,7 @@ export function Gallery({ sectionIndex }: { sectionIndex?: number }) {
                 type="button"
                 onClick={() => dialog.current?.close()}
                 aria-label="Zapri galerijo"
-                className="ml-2 inline-flex size-11 items-center justify-center rounded-[2px] bg-white text-ink transition-colors hover:bg-white/85"
+                className="ml-2 inline-flex size-11 items-center justify-center rounded-[2px] bg-accent-bright text-ink transition-[filter] hover:brightness-110"
               >
                 <CloseIcon className="size-5" />
               </button>

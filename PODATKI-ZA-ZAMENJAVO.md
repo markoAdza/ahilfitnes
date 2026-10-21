@@ -1,103 +1,117 @@
 # Podatki, ki jih je treba zamenjati
 
-Spletna stran je vsebinsko dokončana, a del kontaktnih podatkov je bil prevzet
-iz prvotnega osnutka in **ni resničen**. Ta dokument našteje vse take podatke in
-kje se popravijo.
+Stran je oblikovno in vsebinsko dokončana, a del podatkov še **ni resničen** —
+to so nadomestki, ki čakajo na stranko. Ta dokument našteje vse take podatke in
+kje se popravijo. Pred objavo v produkcijo mora biti vsaka vrstica v razdelku 1
+urejena.
 
-Skoraj vse stoji v eni datoteki — [`lib/site.ts`](lib/site.ts). Popravek na enem
-mestu se sam prenese v navigacijo, nogo, vse kartice lokacij, vse `tel:`
-povezave, zemljevide, strukturirane podatke in zemljevid strani.
+Skoraj vse stoji v [`lib/`](lib/). Popravek na enem mestu se sam prenese v
+navigacijo, nogo, dialog za vpis, kartice lokacij, vse `tel:` in `mailto:`
+povezave, zemljevide, strukturirane podatke in odgovore v pogostih vprašanjih.
 
 ---
 
-## 1. Nujno — podatki, ki so izmišljeni
+## 1. Nujno — nadomestki na strani
 
 | Podatek | Trenutna vrednost | Kje | Opomba |
 |---|---|---|---|
-| **Glavna telefonska številka** | `+386 1 234 5678` | [`lib/site.ts:20`](lib/site.ts) | Najbolj kritično: to je številka na vsakem gumbu na strani. Pojavi se v navigaciji, nogi, vseh pozivih k akciji, cenikih in v odgovoru "Kako se vpišem?". |
-| Telefon Hrastnik | `+386 3 564 2210` | [`lib/site.ts`](lib/site.ts) | |
-| Telefon Zagorje ob Savi | `+386 3 566 4180` | [`lib/site.ts`](lib/site.ts) | |
-| Naslov Hrastnik | `Log 24, 1430 Hrastnik` | [`lib/site.ts`](lib/site.ts) | Vpliva tudi na povezavo do Zemljevidov Google in na vdelan zemljevid. |
-| Naslov Zagorje ob Savi | `Cesta zmage 12, 1410 Zagorje ob Savi` | [`lib/site.ts`](lib/site.ts) | Enako. |
-| **Družbena omrežja** | `https://instagram.com`, `https://facebook.com`, `https://tiktok.com` | [`lib/site.ts`](lib/site.ts) | Gole domene brez računa — ikone v nogi trenutno vodijo na vstopno stran omrežja. Vstavi prave profile ali ikono odstrani. |
-| Domena | `https://ahil-fitness.vercel.app` | [`lib/site.ts`](lib/site.ts) | Ob prehodu na pravo domeno popravi tudi tu: uporablja se za `sitemap.xml`, `robots.txt`, kanonične naslove in Open Graph. |
-| Ure recepcije | `med tednom 9.00–20.00, v soboto 9.00–13.00` | [`lib/site.ts`](lib/site.ts) | Preveri pri stranki. Če se spremenijo, popravi **oba** zapisa: besedilni `reception` in strojni `receptionHours`, ki poganja živ status "recepcija je odprta / zaprta". |
+| **Glavna telefonska številka** | `+386 1 234 5678` | [`lib/site.ts`](lib/site.ts) → `site.phone` | Najbolj kritično: številka je na vsakem gumbu "Pokliči", v dialogu za vpis, nogi, navigaciji in v odgovoru "Kako se vpišem?". |
+| Naslov Hrastnik | `[naslov], 1430 Hrastnik` | [`lib/site.ts`](lib/site.ts) → `locations` | Oglati oklepaji so namenoma vidni. Vpliva tudi na povezavo do Zemljevidov Google in na vdelan zemljevid. |
+| Naslov Trbovlje | `[naslov], 1420 Trbovlje` | [`lib/site.ts`](lib/site.ts) → `locations` | Enako. |
+| Telefon Hrastnik, Trbovlje | *(ni naveden)* | [`lib/site.ts`](lib/site.ts) → `locations[].phone` | Neobvezno polje. Brez njega kartica lokacije pokaže glavno številko. |
+| **Družbena omrežja** | `https://instagram.com`, `https://facebook.com`, `https://tiktok.com` | [`lib/site.ts`](lib/site.ts) → `socials` | Gole domene brez računa. Vstavi prave profile ali ikono odstrani. Ko so pravi, jih dodaj tudi v `sameAs` v [`app/layout.tsx`](app/layout.tsx). |
+| **Seznam opreme** | splošna imena (ročke, tekalne steze …) | [`lib/equipment.ts`](lib/equipment.ts) → `items` | Vsak element je označen `placeholder: true`. Stranka naj sporoči, kaj je res v fitnesih (in znamke, če jih želi navesti). Ko je vnos potrjen, oznako odstrani. |
+| Domena | `https://ahil-fitness.vercel.app` | [`lib/site.ts`](lib/site.ts) → `site.url` | Uporablja se za `sitemap.xml`, `robots.txt`, kanonične naslove in Open Graph. |
 
-### Preverjeni podatki
+### Potrjeni podatki (stranka, 21. 10. 2026)
 
-Iz prvotnega osnutka izhaja kot resničen samo Sevnica:
-`Glavni trg 19, 8290 Sevnica`, `+386 7 816 9012`.
+- Lokacije: **Hrastnik, Trbovlje, Sevnica** (Zagorje ni več lokacija).
+- Sevnica: `Glavni trg 19, 8290 Sevnica`, `+386 7 816 9012`.
+- E-pošta za vpis: `ahilfitnes@gmail.com`.
+- Vsi trije fitnesi so odprti **24/7, brez recepcije**; vstop s kartico.
+- Vsaka karta velja na vseh treh lokacijah.
+- Brezplačno parkirišče ob vseh treh fitnesih.
+- Garderobe in prhe na vseh treh lokacijah. Drugih ugodnosti (savna, skupinske
+  vadbe, masaža, WiFi, vstopnice za goste, zamrznitev članarine) stranka ni
+  potrdila, zato jih stran ne omenja.
+- Vpis: pokliči ali piši → dogovor za termin → v fitnesu plačaš karto in letno
+  članarino ter prevzameš kartico. Brezplačnega preizkusa ni.
 
 ---
 
-## 2. Fotografije
+## 2. Cene
 
-Na voljo je **šest** različnih posnetkov notranjosti, nobeden pa ni izrecno
-vezan na določeno lokacijo. Zato zdaj vsaka lokacija prikaže drugo sobo, da se
-ista fotografija ne ponovi trikrat:
+Vse cene so prepisane s **tiskanega cenika v fitnesu** in so z DDV. Edini vir
+je [`lib/pricing.ts`](lib/pricing.ts) — opisi strani, kartice, dialog in
+odgovori v [`lib/faq.ts`](lib/faq.ts) jih berejo od tam, zato se ne morejo
+razlikovati.
 
-| Lokacija | Trenutna fotografija |
+| Karta | Cena | Opomba |
+|---|---|---|
+| Enkratni obisk | 15 € | |
+| 10 obiskov | 75 € | Velja 365 dni od nakupa karte |
+| Tedenska karta | 25 € | |
+| **Mesečna karta** | 65 € | Oznaka "Najbolj priljubljeno" |
+| Polletna karta | 330 € | Stran izračuna ≈ 55 € na mesec |
+| Letna karta | 600 € | Stran izračuna 50 € na mesec |
+
+Osebni trener: 1 ura 35 € · 4 ure (1× na teden) 120 € · 8 ur (2× na teden)
+200 € · 12 ur (3× na teden) 240 €. Paketi veljajo **do porabe**.
+
+Druge storitve: letna članarina 20 € · izdelava nove kartice 10 €.
+
+⚠️ **Za potrditev pri stranki:** letna članarina (20 €) je po navodilu stranke
+obvezna za **vse** karte — torej tudi za enkratni obisk, ki tako skupaj stane
+35 €. Če to ne drži (npr. enkratni obisk je brez članarine), popravi opis
+`annualFee` v `lib/pricing.ts`, opombo na `PassCard` in odgovor "Kaj je letna
+članarina?" v `lib/faq.ts`.
+
+---
+
+## 3. Fotografije — vse so nadomestne
+
+Vse fotografije v [`public/images/`](public/images/) so z **Unsplash** (licenca
+Unsplash, prosta uporaba) in **niso posnete v fitnesih Ahil**. Avtorji so v
+[`public/images/CREDITS.md`](public/images/CREDITS.md). Prejšnje fotografije so
+bile ustvarjene z umetno inteligenco in so odstranjene.
+
+Stran zato nikjer ne trdi, da fotografija prikazuje naš prostor: hero in
+kartice opreme imajo `alt=""` (okras), kartice lokacij "Nadomestna fotografija
+vadbenega prostora", galerija pa nima napisa "naši prostori".
+
+| Datoteka | Kje se prikaže |
 |---|---|
-| Hrastnik | `/images/hrastnik.jpg` |
-| Zagorje ob Savi | `/images/sevnica.jpg` *(nadomestna)* |
-| Sevnica | `/images/equipment-hero.jpg` *(nadomestna)* |
+| `hero.jpg` | Ozadje heroja na domači strani |
+| `lokacija-hrastnik.jpg`, `lokacija-trbovlje.jpg`, `lokacija-sevnica.jpg` | Kartice lokacij |
+| `oprema-*.jpg` (4) | Kartice con na domači strani in na /oprema |
+| `galerija-1.jpg` … `galerija-6.jpg` | Galerija |
 
-> **Opomba:** v mapi `images/readdy/` obstaja datoteka `zagorje.jpg`, ki pa je
-> bajt za bajt enaka Hrastnikovi (`hrasnk.jpg`) — torej ni fotografija Zagorja
-> in je nismo uporabili.
+**Priporočilo:** fotografiranje vseh treh fitnesov, 3–4 posnetki na lokacijo in
+po en posnetek vsake cone. Ko so na voljo, zamenjaj datoteke z istim imenom ali
+popravi poti v `lib/site.ts` in `lib/equipment.ts`, ter popravi `alt` besedila,
+da opišejo pravi prostor.
 
-**Priporočilo:** naročiti fotografiranje vseh treh fitnesov. Vsaka lokacija
-potrebuje 2–3 posnetke; galerija na domači strani in na strani z opremo bere iz
-polja `gallery` v [`lib/site.ts`](lib/site.ts) in sprejme poljubno število slik.
-
-Neuporabljeno: `images/owner.png` (fotografija lastnika). Sekcije o ekipi po
-dogovoru nismo dodali — če se pozneje odločite zanjo, je to najmočnejši element
-proti občutku "generične strani", saj doda resničen obraz.
-
----
-
-## 3. Cene — preverjene, a jih velja potrditi
-
-Vsi zneski so nespremenjeni iz prvotnega osnutka in stojijo v
-[`lib/pricing.ts`](lib/pricing.ts) kot **števila** (izpis `49 €` naredi
-`eur()` iz [`lib/i18n.ts`](lib/i18n.ts), prihranke pa preklopnik izračuna sam).
-
-Članarina `49 €` / `252 €` / `444 €` · dnevna vstopnica `15 €` ·
-osebni trening `45 €` / `200 €` / `380 €` ·
-skupinske vadbe `15 €` / `120 €` / `80 €` ·
-omarica `10 €` · brisače `15 €` · masaža `60 €`
-
-⚠️ Cene so **na treh mestih**, ki se morajo ujemati:
-1. [`lib/pricing.ts`](lib/pricing.ts) — vir resnice
-2. [`app/cenik/page.tsx`](app/cenik/page.tsx) — vpisane v opis strani za iskalnike
-3. [`lib/faq.ts`](lib/faq.ts) — vpisane v besedilo odgovorov
+Logotip: [`public/brand/`](public/brand/) vsebuje vektorsko sled originalnega
+logotipa (`logo.svg`, `logo-light.svg`, `helmet.svg`). Narejena je samodejno iz
+`public/images/logo.png` in se ujema z njim — če ima stranka izvirno vektorsko
+datoteko, jo uporabi namesto sledi.
 
 ---
 
 ## 4. Besedilo za pregled pri stranki
 
-Strokovni izrazi za opremo so prevedeni po najboljši presoji. Če v fitnesu
-uporabljate druge izraze, jih popravite v [`lib/equipment.ts`](lib/equipment.ts):
-
-| Uporabljeno | Možna alternativa |
-|---|---|
-| Kettlebelli | girje |
-| Bojne vrvi | battle ropes |
-| Pliometrične skrinje | plyo skrinje, skakalne skrinje |
-| Kabelski trenažerji | škripčevja |
-| Cona z masažnimi valji | foam roller cona |
-| Naprava za potisk nog | leg press |
-
-Nagovor je **tikanje** ("Treniraj, kadar želiš") — po dogovoru. Če bi stranka
-raje vikanje, gre za sistematičen popravek v `lib/*.ts` in v komponentah.
+- Nagovor je **tikanje** ("Pridruži se", "Pokliči ali piši").
+- Hero je samo besedna znamka "Ahil fitnes" — brez slogana, po dogovoru.
+- Imena con (Proste uteži, Naprave na plošče, Kardio, Funkcionalna cona) in
+  njihovi kratki opisi so v [`lib/equipment.ts`](lib/equipment.ts).
 
 ---
 
 ## 5. Kaj je še vredno urediti
 
-- **Google Business Profile** za vse tri lokacije. Stran zdaj oddaja
-  `SportsActivityLocation` oznake z naslovi, telefoni in odprtostjo 24/7, kar
-  Google lahko poveže s profilom — brez profila je polovica učinka izgubljena.
+- **Google Business Profile** za vse tri lokacije. Stran oddaja
+  `SportsActivityLocation` oznake z naslovi in odprtostjo 24/7 — brez profila je
+  polovica učinka izgubljena. Najprej pa pravi naslovi (razdelek 1).
 - **Prava domena** namesto `.vercel.app`.
-- **Open Graph slika** (`app/opengraph-image.png`, priporočeno 1200 × 630).
-  Trenutno predogled ob deljenju povezave nima slike.
+- **Open Graph slika** (`app/opengraph-image.png`, 1200 × 630) — npr. bronasta
+  čelada na temni podlagi.

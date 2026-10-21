@@ -1,11 +1,13 @@
+import { CtaBand } from "@/components/CtaBand";
 import { EquipmentShowcase } from "@/components/EquipmentShowcase";
 import { FactsStrip } from "@/components/FactsStrip";
 import { Gallery } from "@/components/Gallery";
 import { Hero } from "@/components/Hero";
 import { LocationSwitcher } from "@/components/LocationSwitcher";
-import { Marquee } from "@/components/Marquee";
-import { PlanSwitcher } from "@/components/PlanSwitcher";
-import { CtaBand } from "@/components/CtaBand";
+import { PricingPreview } from "@/components/PricingPreview";
+import { TrainingTeaser } from "@/components/TrainingTeaser";
+import { eur } from "@/lib/i18n";
+import { fromPrice } from "@/lib/pricing";
 import { locations, site } from "@/lib/site";
 
 /**
@@ -20,7 +22,8 @@ const locationSchema = locations.map((location) => ({
   name: `${site.name} ${location.name}`,
   parentOrganization: { "@type": "Organization", name: site.name, url: site.url },
   url: site.url,
-  telephone: location.phone,
+  telephone: location.phone ?? site.phone,
+  email: site.email,
   address: {
     "@type": "PostalAddress",
     streetAddress: location.address,
@@ -57,26 +60,18 @@ export default function HomePage() {
       />
 
       <Hero />
-
-      {/*
-       * Trak dejstev in lokacije stojita v skupnem ovoju, ker je ovoj tudi
-       * vsebovalni blok lepljivega traku: trak tako spremlja obiskovalca skozi
-       * tri fitnese in se sprosti, ko se sekcija konča. Brez ovoja bi ostal
-       * prilepljen do konca strani in trajno pojedel 80 px zaslona.
-       */}
-      <div>
-        <FactsStrip />
-        <LocationSwitcher />
-      </div>
-
-      <Marquee />
-      <EquipmentShowcase />
-      <Gallery sectionIndex={3} />
-      <PlanSwitcher sectionIndex={4} showAllLink />
+      <FactsStrip />
+      <LocationSwitcher />
+      <EquipmentShowcase sectionIndex={2} />
+      <PricingPreview sectionIndex={3} />
+      <TrainingTeaser sectionIndex={4} />
+      <Gallery sectionIndex={5} />
 
       <CtaBand
-        title="Pridi pogledat"
-        body="Med urami recepcije se oglasi na ogled, ali pa kupi dnevno vstopnico za 15 € in prostor preizkusi zares."
+        title="Kako se vpišeš"
+        body={`Pokliči ali piši in se dogovorimo za termin. Če želiš prostor najprej preizkusiti, je enkratni obisk ${eur(
+          fromPrice,
+        )}.`}
       />
     </>
   );

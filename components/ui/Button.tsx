@@ -1,38 +1,32 @@
 import Link from "next/link";
 import type { ComponentPropsWithoutRef, ReactNode } from "react";
 
-type Variant =
-  | "primary"
-  | "neutral"
-  | "outline"
-  | "outlineLight"
-  | "onLight"
-  | "outlineOnLight";
+type Variant = "primary" | "outline" | "outlineLight";
 type Size = "md" | "lg";
 
+/*
+ * Velike črke z razmikom in najmanj 44 px višine — gumb mora biti zadetek s
+ * palcem tudi na najmanjšem telefonu.
+ */
 const base =
-  "inline-flex items-center justify-center gap-2 rounded-[2px] font-medium whitespace-nowrap transition-colors duration-150";
+  "inline-flex min-h-11 items-center justify-center gap-2.5 rounded-[2px] font-semibold tracking-[0.08em] uppercase whitespace-nowrap transition-[background-color,border-color,color,filter] duration-200";
 
 /*
- * `primary` je baker: vsak poziv k akciji na tej strani je klic, in ta en gumb
- * je edino mesto, kjer akcent nastopi kot polnilo. `neutral` je kreda na
- * temnem za drugotna dejanja, `onLight` para pa obrne vlogi za svetel otok
- * (cenik), kjer bi kreda na kredi izginila.
+ * `primary` je poliran bron: edino mesto, kjer akcent nastopi kot polnilo, in
+ * vedno vodi k vpisu. Hover ga posvetli s filtrom namesto z drugo barvo, da ne
+ * vpelje odtenka, ki ga v žetonih ni. `outline` je drugotno dejanje na
+ * podlagi strani, `outlineLight` isto nad fotografijo.
  */
 const variants: Record<Variant, string> = {
-  primary: "bg-accent text-ink hover:bg-accent-deep",
-  neutral: "bg-chalk text-ink hover:bg-white",
-  outline: "border border-line text-chalk hover:border-chalk hover:bg-ink-3",
+  primary: "bg-accent-bright text-ink hover:brightness-110 active:brightness-95",
+  outline: "border border-line text-chalk hover:border-accent hover:text-accent-bright",
   outlineLight:
-    "border border-white/45 text-white backdrop-blur-[2px] hover:border-white hover:bg-white/10",
-  onLight: "bg-ink text-chalk hover:bg-ink-2",
-  outlineOnLight:
-    "border border-ink/25 text-ink hover:border-ink hover:bg-ink hover:text-chalk",
+    "border border-chalk/40 text-chalk backdrop-blur-[2px] hover:border-accent-bright hover:text-accent-bright",
 };
 
 const sizes: Record<Size, string> = {
-  md: "px-4 py-2.5 text-[0.875rem]",
-  lg: "px-6 py-3.5 text-[0.9375rem]",
+  md: "px-4 py-2.5 text-[0.75rem]",
+  lg: "px-7 py-4 text-[0.8125rem]",
 };
 
 type ButtonLinkProps = {
@@ -44,9 +38,8 @@ type ButtonLinkProps = {
 } & Omit<ComponentPropsWithoutRef<"a">, "href" | "className" | "children">;
 
 /**
- * Uporabi next/link za notranje poti in navaden anchor za `tel:` / zunanje
- * cilje. Vsak poziv k akciji na tej strani je telefonski klic, zato se večina
- * primerkov izriše kot anchor.
+ * Uporabi next/link za notranje poti in navaden anchor za `tel:`, `mailto:` in
+ * zunanje cilje.
  */
 export function ButtonLink({
   href,

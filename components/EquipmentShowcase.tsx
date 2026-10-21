@@ -3,83 +3,77 @@ import Link from "next/link";
 
 import { ArrowRightIcon } from "@/components/ui/Icons";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { categoryShowcase, equipment } from "@/lib/equipment";
-import { forms, plural } from "@/lib/i18n";
+import { categories } from "@/lib/equipment";
 
 /**
- * Štiri kategorije in kaj je v njih.
+ * Štiri cone in kaj je v njih.
  *
- * Prvotni osnutek je tu imel bento mrežo štirih fotografij, kjer je bila
- * vsebina skrita za hover — sekcija je pokazala štiri temne pravokotnike in
- * povedala nič. Tu so seznami vsebina, fotografija jih podpira, in vsaka
- * kartica vodi naravnost v svojo kategorijo v katalogu.
+ * Vsaka kartica vodi naravnost v svojo cono v katalogu (`/oprema#kardio`).
+ * Fotografije so razbarvane in toniranje v bron jih poveže z ostalo stranjo —
+ * so nadomestne in ne prikazujejo fitnesov Ahil, zato so zgolj okras.
  */
-export function EquipmentShowcase() {
+export function EquipmentShowcase({ sectionIndex }: { sectionIndex?: number }) {
   return (
-    <section className="py-16 md:py-24">
+    <section className="py-20 md:py-24">
       <div className="container-page">
         <SectionHeading
-          index={2}
+          index={sectionIndex}
           label="Oprema"
-          title="Kaj je na tleh"
-          intro="Enaka oprema na vsaki lokaciji, od vrste tekalnih stez do savne."
+          title="Štiri cone"
+          intro="Proste uteži, naprave na plošče, kardio in prostor za funkcionalno vadbo — na vsaki lokaciji."
           action={
             <Link
               href="/oprema"
-              className="inline-flex items-center gap-2 text-[0.9375rem] font-medium text-chalk transition-colors hover:text-accent"
+              className="type-label inline-flex items-center gap-2 text-chalk transition-colors hover:text-accent-bright"
             >
-              Vseh {equipment.length} {plural(equipment.length, forms.naprava)}
+              Vsa oprema
               <ArrowRightIcon aria-hidden="true" className="size-4" />
             </Link>
           }
         />
 
-        <ul className="mt-12 grid gap-4 md:gap-5 lg:grid-cols-2">
-          {categoryShowcase.map((entry, index) => (
-            <li
-              key={entry.slug}
-              data-reveal
-              data-reveal-delay={String((index % 2) + 1)}
-            >
+        <ul className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {categories.map((entry, index) => (
+            <li key={entry.slug} data-reveal data-reveal-delay={String((index % 3) + 1)}>
               <Link
                 href={`/oprema#${entry.slug}`}
-                className="group flex h-full flex-col overflow-hidden rounded-[2px] border border-line bg-ink-2 transition-colors hover:border-muted"
+                className="group flex h-full flex-col overflow-hidden rounded-[2px] border border-line bg-ink-2 transition-colors hover:border-accent"
               >
-                <div className="relative aspect-16/9 overflow-hidden bg-ink-3">
+                <div className="relative aspect-4/5 overflow-hidden bg-ink-3">
                   <Image
                     src={entry.image}
                     alt=""
                     fill
-                    sizes="(min-width: 1024px) 46vw, 100vw"
+                    sizes="(min-width: 1024px) 24vw, (min-width: 640px) 48vw, 100vw"
                     style={{ objectPosition: entry.focus }}
-                    className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                    className="object-cover opacity-75 grayscale transition-transform duration-700 group-hover:scale-[1.04]"
                   />
                   <div
                     aria-hidden="true"
-                    className="absolute inset-0 bg-gradient-to-t from-ink-2 via-ink-2/20 to-transparent"
+                    className="absolute inset-0 bg-accent-deep opacity-25 mix-blend-color"
                   />
+                  {/* Spodaj zlitje v kartico, zgoraj senca, da rimska številka ostane berljiva. */}
+                  <div
+                    aria-hidden="true"
+                    className="absolute inset-0 bg-[linear-gradient(to_bottom,rgb(18_18_17/0.7)_0%,transparent_30%,transparent_55%,var(--color-ink-2)_100%)]"
+                  />
+                  <span
+                    aria-hidden="true"
+                    className="type-serif absolute top-4 left-5 text-3xl text-accent-bright"
+                  >
+                    {entry.numeral}
+                  </span>
                 </div>
 
-                <div className="flex flex-1 flex-col p-6 md:p-7">
-                  <div className="flex items-baseline gap-3">
-                    <span aria-hidden="true" className="type-label nums text-accent">
-                      {String(index + 1).padStart(2, "0")}
-                    </span>
-                    <h3 className="type-h3">{entry.category}</h3>
-                  </div>
+                <div className="flex flex-1 flex-col p-6">
+                  <h3 className="type-h3 text-[1.375rem] uppercase [font-stretch:72%]">
+                    {entry.name}
+                  </h3>
+                  <p className="mt-2 flex-1 text-[0.9375rem] text-body">
+                    {entry.description}
+                  </p>
 
-                  <ul className="mt-4 flex-1">
-                    {entry.highlights.map((item) => (
-                      <li
-                        key={item}
-                        className="border-b border-line-soft py-2.5 text-[0.9375rem] text-body last:border-b-0"
-                      >
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-
-                  <p className="mt-5 flex items-center gap-2 text-accent">
+                  <p className="mt-6 flex items-center gap-2 text-accent">
                     <span className="type-label">Podrobno</span>
                     <ArrowRightIcon
                       aria-hidden="true"

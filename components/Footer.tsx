@@ -1,16 +1,19 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { ReceptionStatus } from "@/components/ReceptionStatus";
+import { Divider } from "@/components/ui/Divider";
 import {
   FacebookIcon,
   InstagramIcon,
+  MailIcon,
   PhoneIcon,
   PinIcon,
   TikTokIcon,
 } from "@/components/ui/Icons";
 import { Label } from "@/components/ui/Label";
-import { locations, mapsHref, nav, site, socials, telHref } from "@/lib/site";
+import { eur } from "@/lib/i18n";
+import { annualFee } from "@/lib/pricing";
+import { locations, mailHref, mapsHref, nav, site, socials, telHref } from "@/lib/site";
 
 const socialIcons = {
   instagram: InstagramIcon,
@@ -19,42 +22,52 @@ const socialIcons = {
 } as const;
 
 /**
- * Prijava na e-novice, ki je nekoč stala tu, je odstranjena in ne prestiljena:
- * ni imela zaledja in je vseeno potrdila "na seznamu si", kar je edina stvar,
- * ki je noga ne sme narediti. Prostor zdaj nosi naslove in telefonske številke,
- * torej tisto, zaradi česar ljudje pridejo v nogo.
+ * Noga: kako se vpišeš, kje smo in strani.
+ *
+ * Blok "Vpis" nosi kotvo `#vpis` — cilj vsakega gumba "Pridruži se", kadar
+ * JavaScript ni na voljo in se dialog ne more odpreti. Ker je noga na vsaki
+ * strani, kotva vedno obstaja.
  */
 export function Footer() {
   return (
-    <footer
-      id="site-footer"
-      className="grain relative border-t border-line bg-ink-2"
-    >
-      <div className="relative z-1">
-        <div className="container-page grid gap-12 py-16 md:grid-cols-2 lg:grid-cols-12 lg:gap-8">
-          {/* Znamka */}
-          <div className="lg:col-span-4">
+    <footer id="site-footer" className="relative bg-ink-2">
+      <Divider />
+
+      <div className="grain relative">
+        <div className="container-page relative z-1 grid gap-12 py-16 md:grid-cols-2 md:py-20 lg:grid-cols-12 lg:gap-8">
+          {/* Znamka in vpis */}
+          <div id="vpis" className="lg:col-span-4">
             <Image
-              src="/images/logo.png"
+              src="/brand/logo-light.svg"
               alt={site.name}
-              width={132}
-              height={148}
-              /* Grafika logotipa je črna na prozornem; na temnem jo obrnemo. */
-              className="h-12 w-auto brightness-0 invert"
+              width={1780}
+              height={1936}
+              unoptimized
+              className="h-14 w-auto"
             />
-            <p className="mt-6 max-w-xs text-[0.9375rem] leading-relaxed text-body">
-              {site.tagline}
+
+            <Label as="h2" className="mt-10">
+              Vpis
+            </Label>
+            <p className="mt-3 max-w-xs text-[0.9375rem] leading-relaxed text-body">
+              Pokliči ali piši in se dogovorimo za termin. V fitnesu plačaš karto — pri
+              časovnih kartah še letno članarino ({eur(annualFee)}) — ter prevzameš kartico.
             </p>
 
             <a
               href={telHref(site.phone)}
-              className="mt-7 inline-flex items-center gap-2.5 text-chalk transition-colors hover:text-accent"
+              className="mt-6 flex items-center gap-2.5 text-chalk transition-colors hover:text-accent-bright"
             >
               <PhoneIcon className="size-4 text-accent" />
               <span className="nums type-h3">{site.phone}</span>
             </a>
-
-            <ReceptionStatus className="mt-3" />
+            <a
+              href={mailHref("Vpis")}
+              className="mt-2.5 flex items-center gap-2.5 text-chalk transition-colors hover:text-accent-bright"
+            >
+              <MailIcon className="size-4 text-accent" />
+              <span className="type-h3">{site.email}</span>
+            </a>
           </div>
 
           {/* Lokacije */}
@@ -62,28 +75,35 @@ export function Footer() {
             <Label as="h2">Lokacije</Label>
             <ul className="mt-6 flex flex-col gap-6">
               {locations.map((location) => (
-                <li key={location.slug} className="text-[0.9375rem]">
-                  <p className="font-medium text-chalk">{location.name}</p>
+                <li key={location.slug} className="flex gap-4 text-[0.9375rem]">
+                  <span aria-hidden="true" className="type-serif w-7 shrink-0 text-xl leading-6 text-accent">
+                    {location.numeral}
+                  </span>
+                  <div>
+                    <p className="font-medium text-chalk">{location.name}</p>
 
-                  <a
-                    href={mapsHref(location.address)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-1 inline-flex items-start gap-2 text-body transition-colors hover:text-chalk"
-                  >
-                    <PinIcon
-                      aria-hidden="true"
-                      className="mt-1 size-3.5 shrink-0 text-muted"
-                    />
-                    {location.address}
-                  </a>
+                    <a
+                      href={mapsHref(location.address)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-1 inline-flex items-start gap-2 text-body transition-colors hover:text-chalk"
+                    >
+                      <PinIcon
+                        aria-hidden="true"
+                        className="mt-1 size-3.5 shrink-0 text-muted"
+                      />
+                      {location.address}
+                    </a>
 
-                  <a
-                    href={telHref(location.phone)}
-                    className="nums link-underline mt-1 block text-body transition-colors hover:text-chalk"
-                  >
-                    {location.phone}
-                  </a>
+                    {location.phone ? (
+                      <a
+                        href={telHref(location.phone)}
+                        className="nums link-underline mt-1 block text-body transition-colors hover:text-chalk"
+                      >
+                        {location.phone}
+                      </a>
+                    ) : null}
+                  </div>
                 </li>
               ))}
             </ul>
@@ -109,14 +129,14 @@ export function Footer() {
 
             <div className="mt-10 border-t border-line pt-6">
               <p className="text-sm text-muted">
-                Fitnesi so odprti 24 ur na dan, 365 dni na leto. Recepcija je
-                zasedena {site.reception}.
+                {site.access}. Recepcije ni — vstopiš s svojo kartico, kadar ti
+                ustreza.
               </p>
             </div>
           </div>
         </div>
 
-        <div className="border-t border-line">
+        <div className="relative z-1 border-t border-line">
           <div className="container-page flex flex-col gap-4 py-6 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-sm text-muted">
               &copy; {new Date().getFullYear()} {site.name}

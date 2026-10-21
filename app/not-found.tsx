@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { ButtonLink } from "@/components/ui/Button";
+import { HelmetMark } from "@/components/ui/HelmetMark";
 import { Label } from "@/components/ui/Label";
 import { nav } from "@/lib/site";
 
@@ -10,8 +11,12 @@ export const metadata: Metadata = {
 
 export default function NotFound() {
   return (
-    <section>
-      <div className="container-page flex min-h-[60vh] flex-col justify-center py-24">
+    <section className="relative overflow-hidden">
+      <HelmetMark
+        tone="current"
+        className="pointer-events-none absolute top-1/2 -right-24 h-[90%] w-auto -translate-y-1/2 text-line/70 md:right-[6vw]"
+      />
+      <div className="container-page relative flex min-h-[70vh] flex-col justify-center py-24">
         <Label tone="accent">Napaka 404</Label>
         <h1 className="type-h1 mt-6 max-w-xl">Te strani nismo našli</h1>
         <p className="type-lede mt-5 max-w-md text-body">
@@ -24,7 +29,7 @@ export default function NotFound() {
             Nazaj na domačo stran
           </ButtonLink>
           <ButtonLink href="/cenik" variant="outline" size="lg">
-            Članarina in cene
+            Cenik
           </ButtonLink>
         </div>
       </div>

@@ -35,7 +35,7 @@ export function pluralize(count: number, forms: PluralForms): string {
 }
 
 /**
- * Cena po slovenski konvenciji: `49 €`, ne `€49`.
+ * Cena po slovenski konvenciji: `65 €`, ne `€65`.
  *
  * Presledek je nedeljivi (U+00A0), da se številka in simbol nikoli ne razideta
  * na dve vrstici — v ozkih stolpcih cenika se to sicer zgodi.
@@ -59,21 +59,26 @@ export function fold(text: string): string {
 }
 
 /**
- * Našteje elemente po slovensko: `a, b in c`.
+ * Našteje elemente po slovensko: `a, b in c` (ali `a, b ali c`).
  *
  * V slovenščini pred zadnjim členom ni vejice (nasprotno od oxfordske vejice),
  * zato `Array.join(", ")` iz angleškega izvirnika ne zadošča.
  */
-export function listSl(items: readonly string[]): string {
+export function listSl(
+  items: readonly string[],
+  conjunction: "in" | "ali" = "in",
+): string {
   if (items.length === 0) return "";
   if (items.length === 1) return items[0];
-  return `${items.slice(0, -1).join(", ")} in ${items[items.length - 1]}`;
+  return `${items.slice(0, -1).join(", ")} ${conjunction} ${items[items.length - 1]}`;
 }
 
 /** Pogosto uporabljene oblike, da se ne ponavljajo po komponentah. */
 export const forms = {
   lokacija: ["lokacija", "lokaciji", "lokacije", "lokacij"] as PluralForms,
   naprava: ["naprava", "napravi", "naprave", "naprav"] as PluralForms,
+  karta: ["karta", "karti", "karte", "kart"] as PluralForms,
+  ura: ["ura", "uri", "ure", "ur"] as PluralForms,
   mesec: ["mesec", "meseca", "mesece", "mesecev"] as PluralForms,
   /*
    * Mestnik — za predlogom "v". Imenovalniške oblike zgoraj tu ne delujejo:

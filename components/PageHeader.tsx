@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 
+import { HelmetMark } from "@/components/ui/HelmetMark";
 import { site } from "@/lib/site";
 
 type Crumb = { label: string; href?: string };
@@ -8,10 +9,8 @@ type Crumb = { label: string; href?: string };
 /**
  * Glava podstrani: drobtine, naslov, uvod.
  *
- * Nadomešča prejšnji pas čez celo širino — potemnjena fotografija s centriranim
- * naslovom v velikih črkah. Fotografija na tej strani nastopa le tam, kjer nosi
- * informacijo (fitnesi sami, kategorije opreme, galerija), zato so notranje
- * strani hitrejše in lažje za pregled.
+ * Brez fotografije: notranje strani so hitrejše in lažje za pregled. Edini
+ * okras je odmev čelade iz heroja — v barvi lasnice, odrezan čez desni rob.
  *
  * Drobtine so bile doslej samo vidne; tu dobijo še `BreadcrumbList` oznake, da
  * jih iskalnik lahko prikaže v zadetku.
@@ -39,14 +38,19 @@ export function PageHeader({
   };
 
   return (
-    <section className="border-b border-line bg-ink-2">
+    <section className="relative overflow-hidden border-b border-line bg-ink-2">
       <script
         type="application/ld+json"
         // Vsebina je statična in zapisana v klicu te komponente.
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
 
-      <div className="container-page pt-10 pb-14 md:pt-14 md:pb-20">
+      <HelmetMark
+        tone="current"
+        className="pointer-events-none absolute -top-10 -right-24 h-[140%] w-auto text-line/70 md:right-[4vw]"
+      />
+
+      <div className="container-page relative pt-10 pb-16 md:pt-14 md:pb-24">
         <nav aria-label="Drobtine">
           <ol className="flex flex-wrap items-center gap-2 text-sm text-muted">
             {crumbs.map((crumb, index) => (
@@ -75,7 +79,7 @@ export function PageHeader({
           </ol>
         </nav>
 
-        <div className="mt-8 flex flex-col gap-8 md:flex-row md:items-end md:justify-between md:gap-16">
+        <div className="mt-10 flex flex-col gap-8 md:flex-row md:items-end md:justify-between md:gap-16">
           <div className="max-w-3xl">
             <h1 className="type-h1">{title}</h1>
             {intro ? (

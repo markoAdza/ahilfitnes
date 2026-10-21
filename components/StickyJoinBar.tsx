@@ -3,20 +3,20 @@
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
-import { PhoneIcon } from "@/components/ui/Icons";
-import { site, telHref } from "@/lib/site";
+import { JoinButton } from "@/components/JoinButton";
+import { site } from "@/lib/site";
 
 /**
- * Lepljiva vrstica za klic na dnu zaslona, samo na mobilnem.
+ * Lepljiva vrstica "Pridruži se" na dnu zaslona, samo na mobilnem.
  *
  * Pojavi se, ko obiskovalec prevozi prvi zaslon, in izgine, ko pride do noge —
- * tam sta številka in poziv k akciji že na strani, dve isti stvari drugo nad
- * drugo pa je le hrup.
+ * tam je kontaktni blok že na strani, dve isti stvari drugo nad drugo pa je le
+ * hrup. Gumb odpre isti dialog kot vsi ostali pozivi.
  *
  * Oba prehoda zaznava IntersectionObserver, ne poslušalec drsenja: en dogodek
  * na prehod namesto enega na piksel.
  */
-export function StickyCallBar() {
+export function StickyJoinBar() {
   const pathname = usePathname();
   const sentinel = useRef<HTMLDivElement>(null);
   const [pastFirstScreen, setPastFirstScreen] = useState(false);
@@ -78,24 +78,12 @@ export function StickyCallBar() {
         ].join(" ")}
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       >
-        <a
-          href={telHref(site.phone)}
-          className="flex items-center justify-between gap-4 px-5 py-3"
-        >
-          <span>
-            <span className="block text-[0.9375rem] font-medium text-chalk">
-              Pokliči in se vpiši
-            </span>
-            <span className="nums block text-sm text-muted">{site.phone}</span>
-          </span>
-
-          <span
-            aria-hidden="true"
-            className="inline-flex size-11 shrink-0 items-center justify-center rounded-[2px] bg-accent text-ink"
-          >
-            <PhoneIcon className="size-5" />
-          </span>
-        </a>
+        <div className="flex items-center justify-between gap-4 px-5 py-3">
+          <p className="text-sm text-muted">{site.access}</p>
+          <JoinButton size="md" className="shrink-0">
+            Pridruži se
+          </JoinButton>
+        </div>
       </div>
     </>
   );

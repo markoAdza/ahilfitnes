@@ -1,11 +1,16 @@
-import { site } from "@/lib/site";
+import { eur, listSl } from "@/lib/i18n";
+import { annualFee, cardFee, pass, training } from "@/lib/pricing";
+import { locations, site } from "@/lib/site";
 
 /**
  * Pogosta vprašanja.
  *
- * Imena paketov in zneski se morajo ujemati z lib/pricing.ts, kontaktna
- * številka pa je vstavljena iz lib/site.ts in ne prepisana, da popravek
- * nadomestne telefonske številke na enem mestu popravi vse.
+ * Vsak znesek, ime karte, lokacija in kontakt je vstavljen iz lib/pricing.ts in
+ * lib/site.ts, ne prepisan — popravek cene ali nadomestne telefonske številke
+ * na enem mestu popravi tudi odgovore.
+ *
+ * Odgovori navajajo samo to, kar je stranka potrdila. Česar ne vemo (recepcija,
+ * zamrznitev, vstopnice za goste), ne obljubljamo.
  */
 
 export type FaqItem = {
@@ -13,54 +18,57 @@ export type FaqItem = {
   answer: string;
 };
 
+const names = listSl(locations.map((location) => location.name));
+const tenVisits = pass("10-obiskov");
+const [single, ...packages] = training;
+
 export const faqs: FaqItem[] = [
   {
-    question: "Kdaj ste odprti?",
-    answer:
-      "Fitnesi so odprti 24 ur na dan, 365 dni na leto, na vseh treh lokacijah. Recepcija je zasedena med tednom od 9.00 do 20.00 in v soboto od 9.00 do 13.00 — takrat pridi, če želiš ogled, podpis pogodbe ali odgovor v živo.",
+    question: "Kako se vpišem?",
+    answer: `Pokliči na ${site.phone} ali piši na ${site.email}. Dogovorimo se za termin in se dobimo v fitnesu, kjer plačaš izbrano karto — pri časovnih kartah še letno članarino (${eur(
+      annualFee,
+    )}) — ter prevzameš kartico za vstop. Od takrat prideš, kadar želiš.`,
   },
   {
-    question: "Ali moram opremo rezervirati vnaprej?",
-    answer:
-      "Za nobeno napravo rezervacija ni potrebna — prideš in vadiš. Vnaprej se je vredno dogovoriti le za osebni trening in masažo, kar urediš na recepciji ali po telefonu.",
+    question: "Ali moja karta velja na vseh treh lokacijah?",
+    answer: `Da. Vsaka karta — od enkratnega obiska do letne — velja v vseh treh fitnesih: ${names}. Z isto kartico in brez doplačila.`,
   },
   {
-    question: "Ali lahko z eno članarino uporabljam vse tri fitnese?",
+    question: "Kje so parkirišča?",
     answer:
-      "Da. Vsaka članarina vključuje neomejen 24-urni dostop do Hrastnika, Zagorja in Sevnice brez doplačila, z isto kartico.",
+      "Vsi trije fitnesi imajo brezplačno parkirišče tik ob vhodu.",
   },
   {
-    question: "Ali je vpisnina ali minimalna vezava?",
+    question: "Kakšni so delovni časi?",
     answer:
-      "Vpisnine ni. Mesečna članarina znaša 49 € in se obnavlja iz meseca v mesec brez minimalne vezave. Šestmesečna (252 €) in dvanajstmesečna (444 €) se plačata vnaprej, v zameno za nižjo mesečno ceno.",
+      "Fitnesi so odprti 24 ur na dan, vse dni v letu. Recepcije ni — vstopiš s svojo kartico, kadar ti ustreza.",
   },
   {
-    question: "Ali lahko članarino zamrznem ali prekinem?",
-    answer:
-      "Mesečno članarino lahko prekineš kadar koli pred naslednjim obračunom — brez odpovednega roka in brez stroškov. Pri šest- in dvanajstmesečni jo lahko zamrzneš za največ dva meseca na obdobje zaradi zdravstvenih razlogov ali daljše odsotnosti; povej ekipi in uredimo.",
+    question: "Kaj je letna članarina?",
+    answer: `Letna članarina znaša ${eur(
+      annualFee,
+    )} in se plača ob časovnih kartah (tedenska, mesečna, polletna, letna) — ob vpisu in nato enkrat na leto. Karte za obiske, enkratni obisk in 10 obiskov, je nimajo.`,
   },
   {
-    question: "Ali ponujate vstopnice za goste?",
-    answer:
-      "Šestmesečna članarina vključuje dve vstopnici za goste na mesec, dvanajstmesečna pa neomejeno. Če imaš mesečno članarino, lahko nekoga pripelješ z dnevno vstopnico za 15 €.",
+    question: "Kaj, če izgubim kartico?",
+    answer: `Izdelava nove kartice stane ${eur(
+      cardFee,
+    )}. Pokliči ali piši in dogovorimo se za prevzem.`,
+  },
+  {
+    question: "Koliko časa velja karta za 10 obiskov?",
+    answer: `${tenVisits.validity}. V tem času porabiš deset obiskov, kadar in na kateri lokaciji želiš. Karta stane ${eur(
+      tenVisits.price,
+    )}.`,
   },
   {
     question: "Kako poteka osebni trening?",
-    answer:
-      "Vsi naši trenerji so usposobljeni in na voljo na vseh lokacijah. En trening je 45 €, pet treningov 200 € in deset treningov 380 €. Pri dvanajstmesečni članarini je en trening na mesec vključen.",
-  },
-  {
-    question: "Kaj je na posamezni lokaciji?",
-    answer:
-      "Vsak fitnes ima brezplačno parkiranje, garderobe, prhe in savno. Hrastnik in Sevnica imata še zaseben prostor za masažo, Zagorje pa studio za skupinske vadbe.",
-  },
-  {
-    question: "Ali ponujate skupinske vadbe?",
-    answer:
-      "Da. Posamezna vadba je 15 €, paket desetih vadb 120 €, ali pa članarini dodaš neomejene vadbe za 80 € na mesec. Trenutni urnik je izobešen na recepciji v vsakem fitnesu.",
-  },
-  {
-    question: "Kako se vpišem?",
-    answer: `Pokliči ${site.phone} ali se oglasi v katerem koli od treh fitnesov v času recepcije. Razkažemo ti prostore, skupaj izberemo pravo članarino in lahko vadiš že isti dan.`,
+    answer: `Osebnega trenerja najameš za eno uro (${eur(single.price)}) ali v paketu ${listSl(
+      packages.map((entry) => String(entry.hours)),
+      "ali",
+    )} ur (${listSl(
+      packages.map((entry) => eur(entry.price)),
+      "ali",
+    )}). Paketi veljajo do porabe, termine pa dogovoriš po telefonu ali e-pošti.`,
   },
 ];

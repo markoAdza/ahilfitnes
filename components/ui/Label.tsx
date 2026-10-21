@@ -1,18 +1,16 @@
 import type { ReactNode } from "react";
 
-type Tone = "muted" | "accent" | "light" | "onLight";
+type Tone = "muted" | "accent" | "light";
 
 const tones: Record<Tone, string> = {
   muted: "text-muted",
   accent: "text-accent",
   /** Nad fotografijo, kjer je podlaga negotova. */
-  light: "text-white/65",
-  /** Na svetlem otoku (cenik), kjer bi `muted` izginil. */
-  onLight: "text-ink/55",
+  light: "text-chalk/70",
 };
 
 /**
- * Mikro oznaka — nadnapis nad naslovom, ime kategorije, oznaka "Priporočeno".
+ * Mikro oznaka — nadnapis nad naslovom, ime kategorije, "Najbolj priljubljeno".
  * Nadomešča polnjene tablete iz prvotnega osnutka: pri tej velikosti sta razmik
  * med črkami in barva dovolj, da se bere kot oznaka, in nič ne tekmuje z
  * naslovom pod njo.

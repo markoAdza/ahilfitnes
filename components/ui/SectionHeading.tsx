@@ -2,13 +2,34 @@ import type { ReactNode } from "react";
 
 import { Label } from "@/components/ui/Label";
 
+/** 1 → I, 4 → IV. Sekcij je malo, zato zadošča preprosta tabela. */
+function roman(value: number): string {
+  const table: [number, string][] = [
+    [10, "X"],
+    [9, "IX"],
+    [5, "V"],
+    [4, "IV"],
+    [1, "I"],
+  ];
+
+  let rest = value;
+  let out = "";
+  for (const [amount, numeral] of table) {
+    while (rest >= amount) {
+      out += numeral;
+      rest -= amount;
+    }
+  }
+  return out;
+}
+
 /**
- * Deljena glava sekcije: lasnica, številka sekcije, mikro oznaka, naslov in
- * neobvezen uvod. Levo poravnana in nad njo črta — črta je kompozicijsko
- * sredstvo, ki sekcije poveže med sabo, namesto prejšnjega centriranja vsega.
+ * Deljena glava sekcije: lasnica, rimska številka sekcije, mikro oznaka,
+ * naslov in neobvezen uvod. Levo poravnana in nad njo črta — črta je
+ * kompozicijsko sredstvo, ki sekcije poveže med sabo.
  *
- * `index` izriše dvomestno številko sekcije ob oznaki. To je isti prijem, kot
- * ga uporablja mreža kategorij opreme, le da tu drži ritem celotne strani.
+ * `index` izriše rimsko številko v bronasti serifni kurzivi. To je edini
+ * klasični naglas v glavi; naslov sam ostane kondenziran in surov.
  *
  * `action` se izriše nasproti naslova na namizju (npr. povezava "vse"), da
  * sekcija ponudi izhod brez osamljene povezave pod njo.
@@ -21,7 +42,6 @@ export function SectionHeading({
   action,
   as: Tag = "h2",
   rule = true,
-  tone = "dark",
   className,
 }: {
   label?: string;
@@ -31,34 +51,25 @@ export function SectionHeading({
   action?: ReactNode;
   as?: "h1" | "h2";
   rule?: boolean;
-  tone?: "dark" | "light";
   className?: string;
 }) {
-  const onLight = tone === "light";
-
   return (
     <div
-      className={[
-        rule ? (onLight ? "border-t border-paper-line pt-8" : "border-t border-line pt-8") : "",
-        className,
-      ]
+      className={[rule ? "border-t border-line pt-8" : "", className]
         .filter(Boolean)
         .join(" ")}
     >
       {label || index !== undefined ? (
-        <div className="mb-5 flex items-center gap-3">
+        <div className="mb-6 flex items-baseline gap-4">
           {index !== undefined ? (
             <span
               aria-hidden="true"
-              className={[
-                "type-label nums",
-                onLight ? "text-accent-ink" : "text-accent",
-              ].join(" ")}
+              className="type-serif text-[1.75rem] leading-none text-accent"
             >
-              {String(index).padStart(2, "0")}
+              {roman(index)}
             </span>
           ) : null}
-          {label ? <Label tone={onLight ? "onLight" : "muted"}>{label}</Label> : null}
+          {label ? <Label>{label}</Label> : null}
         </div>
       ) : null}
 
@@ -66,16 +77,7 @@ export function SectionHeading({
         <div className="max-w-2xl">
           <Tag className={Tag === "h1" ? "type-h1" : "type-h2"}>{title}</Tag>
 
-          {intro ? (
-            <p
-              className={[
-                "type-lede mt-4",
-                onLight ? "text-ink/70" : "text-body",
-              ].join(" ")}
-            >
-              {intro}
-            </p>
-          ) : null}
+          {intro ? <p className="type-lede mt-5 text-body">{intro}</p> : null}
         </div>
 
         {action ? <div className="shrink-0 md:pb-1">{action}</div> : null}

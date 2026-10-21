@@ -2,21 +2,21 @@ import type { Metadata } from "next";
 
 import { FaqAccordion } from "@/components/FaqAccordion";
 import { PageHeader } from "@/components/PageHeader";
-import { ReceptionStatus } from "@/components/ReceptionStatus";
-import { PhoneIcon } from "@/components/ui/Icons";
+import { JoinButton } from "@/components/JoinButton";
+import { MailIcon, PhoneIcon } from "@/components/ui/Icons";
 import { Label } from "@/components/ui/Label";
 import { faqs } from "@/lib/faq";
-import { site, telHref } from "@/lib/site";
+import { mailHref, site, telHref } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Pogosta vprašanja",
   description:
-    "Delovni čas, članarine, vstopnice za goste, osebni trening, skupinske vadbe in kaj je v posameznem fitnesu Ahil Fitnes.",
+    "Kako se vpišeš, ali karta velja na vseh lokacijah, parkiranje, delovni čas, letna članarina in osebni trener v fitnesih Ahil Fitnes.",
   alternates: { canonical: "/pogosta-vprasanja" },
   openGraph: {
     title: "Pogosta vprašanja — Ahil Fitnes",
     description:
-      "Kar je treba vedeti o članarinah in prostorih Ahil Fitnes, na enem mestu.",
+      "Vpis, karte, parkiranje in delovni čas Ahil Fitnes, na enem mestu.",
   },
 };
 
@@ -42,11 +42,11 @@ export default function FaqPage() {
 
       <PageHeader
         title="Pogosta vprašanja"
-        intro="Urnik, članarine, vstopnice za goste in kaj je v posameznem fitnesu. Če česa ni med odgovori, je telefon najhitrejša pot."
+        intro="Vpis, karte, parkiranje in delovni čas. Če česa ni med odgovori, pokliči ali piši."
         crumbs={[{ label: "Domov", href: "/" }, { label: "Pogosta vprašanja" }]}
       />
 
-      <section className="py-16 md:py-20">
+      <section className="py-16 md:py-24">
         <div className="container-page grid gap-x-8 gap-y-12 lg:grid-cols-12">
           <div className="lg:col-span-8">
             <FaqAccordion />
@@ -56,24 +56,26 @@ export default function FaqPage() {
           <aside className="lg:col-span-4">
             <div className="rounded-[2px] border border-line bg-ink-2 p-7 lg:sticky lg:top-28">
               <Label as="h2">Še vedno nejasno?</Label>
-              <p className="type-h3 mt-4">
-                Pokliči ekipo in odgovorimo takoj.
-              </p>
+              <p className="type-h3 mt-4">Pokliči ali piši — odgovorimo.</p>
 
               <a
                 href={telHref(site.phone)}
-                className="mt-5 inline-flex items-center gap-2 font-medium text-chalk transition-colors hover:text-accent"
+                className="mt-6 flex items-center gap-2.5 font-medium text-chalk transition-colors hover:text-accent-bright"
               >
                 <PhoneIcon aria-hidden="true" className="size-4 text-accent" />
                 <span className="nums">{site.phone}</span>
               </a>
+              <a
+                href={mailHref("Vprašanje")}
+                className="mt-3 flex items-center gap-2.5 font-medium text-chalk transition-colors hover:text-accent-bright"
+              >
+                <MailIcon aria-hidden="true" className="size-4 text-accent" />
+                <span>{site.email}</span>
+              </a>
 
-              <ReceptionStatus className="mt-4" />
+              <p className="mt-5 text-sm text-muted">{site.access}. Recepcije ni.</p>
 
-              <p className="mt-4 text-sm text-muted">
-                Fitnesi so odprti ves čas — recepcija je zasedena{" "}
-                {site.reception}.
-              </p>
+              <JoinButton className="mt-7 w-full">Pridruži se</JoinButton>
             </div>
           </aside>
         </div>

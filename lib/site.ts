@@ -1,41 +1,103 @@
+import { listSl } from "@/lib/i18n";
+
 /**
  * Edini vir resnice za vse poslovne in kontaktne podatke na strani.
  *
- * POZOR: glavna telefonska številka ter naslova in številki za Hrastnik in
- * Zagorje so NADOMESTKI, prevzeti iz prvotnega osnutka. Popravi jih tu enkrat
- * in vsaka stran, kartica, noga in `tel:` povezava se posodobi sama.
- * Celoten seznam je v PODATKI-ZA-ZAMENJAVO.md.
+ * POZOR: glavna telefonska številka ter naslova za Hrastnik in Trbovlje so
+ * NADOMESTKI. Popravi jih tu enkrat in vsaka stran, kartica, noga in `tel:`
+ * povezava se posodobi sama. Celoten seznam je v PODATKI-ZA-ZAMENJAVO.md.
  */
+
+export type Location = {
+  slug: string;
+  name: string;
+  /** "v Hrastniku" — za stavke, kot je opis strani. */
+  locative: string;
+  /** Rimska številka lokacije, izrisana v serifni kurzivi. */
+  numeral: string;
+  /** Pokrajina, prikazana kot oznaka ob imenu. */
+  region: string;
+  address: string;
+  /** Neobvezna — kjer številka lokacije ni znana, kartica pokaže glavno. */
+  phone?: string;
+  amenities: string[];
+  image: string;
+  /** object-position, da posnetek v kartici pokaže pravi del prostora. */
+  focus: string;
+};
+
+/*
+ * Vse tri lokacije so odprte 24/7 brez recepcije, vse imajo brezplačno
+ * parkiranje ter garderobe in prhe. Druge ugodnosti niso potrjene in se na
+ * strani ne omenjajo.
+ *
+ * Fotografije so nadomestne (Unsplash) in NISO posnete v teh fitnesih —
+ * zamenjaj jih s pravimi, preden gre stran v produkcijo.
+ */
+export const locations: Location[] = [
+  {
+    slug: "hrastnik",
+    name: "Hrastnik",
+    locative: "Hrastniku",
+    numeral: "I",
+    region: "Zasavje",
+    address: "[naslov], 1430 Hrastnik",
+    amenities: ["Brezplačno parkiranje", "Garderobe in prhe"],
+    image: "/images/lokacija-hrastnik.jpg",
+    focus: "center",
+  },
+  {
+    slug: "trbovlje",
+    name: "Trbovlje",
+    locative: "Trbovljah",
+    numeral: "II",
+    region: "Zasavje",
+    address: "[naslov], 1420 Trbovlje",
+    amenities: ["Brezplačno parkiranje", "Garderobe in prhe"],
+    image: "/images/lokacija-trbovlje.jpg",
+    focus: "center",
+  },
+  {
+    slug: "sevnica",
+    name: "Sevnica",
+    locative: "Sevnici",
+    numeral: "III",
+    region: "Posavje",
+    address: "Glavni trg 19, 8290 Sevnica",
+    phone: "+386 7 816 9012",
+    amenities: ["Brezplačno parkiranje", "Garderobe in prhe"],
+    image: "/images/lokacija-sevnica.jpg",
+    focus: "center",
+  },
+];
 
 export const site = {
   name: "Ahil Fitnes",
-  tagline: "Lokalna fitnes skupina v Zasavju, odprta od leta 2020.",
-  description:
-    "Trije fitnesi v Hrastniku, Zagorju in Sevnici, odprti 24 ur na dan. Ena članarina odpre vse tri.",
+  tagline: "Fitnes, odprt 24 ur na dan.",
+  description: `Fitnes, odprt 24 ur na dan, v ${listSl(
+    locations.map((location) => location.locative),
+  )}. Vsaka karta velja na vseh lokacijah.`,
   url: "https://ahil-fitness.vercel.app",
 
   /** Glavna kontaktna številka v navigaciji, ki jo uporablja vsak CTA. */
   phone: "+386 1 234 5678",
 
-  /** Ure recepcije — fitnesi sami se nikoli ne zaprejo. */
-  reception: "med tednom 9.00–20.00, v soboto 9.00–13.00",
+  /** Vpis poteka po telefonu ali po e-pošti. */
+  email: "ahilfitnes@gmail.com",
 
-  founded: 2020,
+  /** Recepcije ni — vstop s kartico, 24 ur na dan, vse dni v letu. */
+  access: "Odprto 24/7, vstop s kartico",
 } as const;
 
-/**
- * Ure recepcije v strojno berljivi obliki, da lahko `ReceptionStatus` pove,
- * ali je recepcija odprta zdaj, ne da bi razčlenjeval niz zgoraj.
- * Ure so lokalne (Europe/Ljubljana).
- */
-export const receptionHours = {
-  /** Ponedeljek–petek. */
-  weekday: { from: 9, to: 20 },
-  /** Sobota. */
-  saturday: { from: 9, to: 13 },
-  /** V nedeljo je recepcija zaprta; fitnesi so odprti. */
-  sunday: null,
-} as const;
+/** `mailto:` s predizpolnjeno zadevo in telesom sporočila. */
+export function mailHref(subject?: string, body?: string): string {
+  const params = new URLSearchParams();
+  if (subject) params.set("subject", subject);
+  if (body) params.set("body", body);
+  // URLSearchParams kodira presledke kot "+", ki jih poštni odjemalci izpišejo dobesedno.
+  const query = params.toString().replace(/\+/g, "%20");
+  return `mailto:${site.email}${query ? `?${query}` : ""}`;
+}
 
 /** Odstrani presledke, da se prikazana številka lahko uporabi v `tel:`. */
 export function telHref(phone: string): string {
@@ -64,74 +126,7 @@ export const nav = [
   { label: "Pogosta vprašanja", href: "/pogosta-vprasanja" },
 ] as const;
 
-export type Location = {
-  slug: string;
-  name: string;
-  /** Pokrajina, prikazana kot oznaka ob imenu. */
-  region: string;
-  address: string;
-  phone: string;
-  amenities: string[];
-  image: string;
-  /** object-position, da se razpoložljive fotografije berejo kot različne sobe. */
-  focus: string;
-};
-
-export const locations: Location[] = [
-  {
-    slug: "hrastnik",
-    name: "Hrastnik",
-    region: "Zasavje",
-    address: "Log 24, 1430 Hrastnik",
-    phone: "+386 3 564 2210",
-    amenities: [
-      "Brezplačno parkiranje",
-      "Garderobe",
-      "Prhe",
-      "Savna",
-      "Prostor za masažo",
-    ],
-    image: "/images/hrastnik.jpg",
-    focus: "center",
-  },
-  {
-    slug: "zagorje",
-    name: "Zagorje ob Savi",
-    region: "Zasavje",
-    address: "Cesta zmage 12, 1410 Zagorje ob Savi",
-    phone: "+386 3 566 4180",
-    amenities: [
-      "Brezplačno parkiranje",
-      "Garderobe",
-      "Prhe",
-      "Savna",
-      "Studio za skupinske vadbe",
-    ],
-    /* Nadomestna fotografija — na voljo je šest različnih posnetkov notranjosti
-       in nobeden ni izrecno iz Zagorja, zato vsaka lokacija prikaže drugo sobo,
-       dokler stranka ne dostavi svojih fotografij. */
-    image: "/images/sevnica.jpg",
-    focus: "center",
-  },
-  {
-    slug: "sevnica",
-    name: "Sevnica",
-    region: "Posavje",
-    address: "Glavni trg 19, 8290 Sevnica",
-    phone: "+386 7 816 9012",
-    amenities: [
-      "Brezplačno parkiranje",
-      "Garderobe",
-      "Prhe",
-      "Savna",
-      "Prostor za masažo",
-    ],
-    /* Nadomestna fotografija — glej opombo pri Zagorju. */
-    image: "/images/equipment-hero.jpg",
-    focus: "center",
-  },
-];
-
+/** NADOMESTKI — prave profile vpiši, ko jih stranka sporoči. */
 export const socials = [
   { label: "Instagram", href: "https://instagram.com", icon: "instagram" },
   { label: "Facebook", href: "https://facebook.com", icon: "facebook" },
@@ -139,17 +134,19 @@ export const socials = [
 ] as const;
 
 /**
- * Fotografije, ki so na voljo za galerijo. Vseh šest je različnih posnetkov
- * notranjosti; ko stranka dostavi svoje, se zamenjajo tu.
+ * Fotografije za galerijo. NADOMESTNE (Unsplash) in NISO posnete v fitnesih
+ * Ahil — zato jih stran opiše kot vzdušje in ne kot "naše prostore". Ko
+ * stranka dostavi svoje, se zamenjajo tu. Avtorji so v public/images/CREDITS.md.
  */
 export const gallery = [
-  { src: "/images/hero.jpg", alt: "Prostor s prostimi utežmi, osvetljen rdeče" },
-  { src: "/images/strength.jpg", alt: "Stojala z ročkami in klopi na oddelku za moč" },
-  { src: "/images/cardio.jpg", alt: "Vrsta tekalnih stez na kardio oddelku" },
+  { src: "/images/galerija-1.jpg", alt: "Ročka s ploščami na temni podlagi" },
   {
-    src: "/images/equipment-hero.jpg",
-    alt: "Pogled po vadbenem prostoru z napravami za moč",
+    src: "/images/galerija-2.jpg",
+    alt: "Moški med zgibi na drogu, posnet od zadaj",
+    focus: "center 20%",
   },
-  { src: "/images/hrastnik.jpg", alt: "Vadbeni prostor v fitnesu Hrastnik" },
-  { src: "/images/sevnica.jpg", alt: "Naprave za funkcionalno vadbo ob oknu" },
+  { src: "/images/galerija-3.jpg", alt: "Plošča za 20 kilogramov na olimpijski palici" },
+  { src: "/images/galerija-4.jpg", alt: "Palica s ploščami na tleh vadbenega prostora" },
+  { src: "/images/galerija-5.jpg", alt: "Stojalo z ročkami v polmraku" },
+  { src: "/images/galerija-6.jpg", alt: "Roka v magneziju dviguje girjo" },
 ] as const;

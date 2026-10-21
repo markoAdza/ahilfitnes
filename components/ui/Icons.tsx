@@ -4,7 +4,7 @@ import type { SVGProps } from "react";
  * Shared line-icon defaults: inherits colour, scales with font-size.
  *
  * Stroke is 1.5 rather than 2 — at the 14-16px sizes these are used at, a
- * 2px stroke reads as heavy next to Inter at 400/500.
+ * 2px stroke reads as heavy next to Archivo at 400/500.
  */
 const stroke: SVGProps<SVGSVGElement> = {
   viewBox: "0 0 24 24",
@@ -20,6 +20,15 @@ export function PhoneIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg {...stroke} {...props}>
       <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.2 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92Z" />
+    </svg>
+  );
+}
+
+export function MailIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...stroke} {...props}>
+      <rect x="3" y="5" width="18" height="14" rx="1.5" />
+      <path d="m3.5 6 8.5 7 8.5-7" />
     </svg>
   );
 }
@@ -60,15 +69,6 @@ export function ArrowUpRightIcon(props: SVGProps<SVGSVGElement>) {
   );
 }
 
-export function ArrowLeftIcon(props: SVGProps<SVGSVGElement>) {
-  return (
-    <svg {...stroke} {...props}>
-      <path d="M20 12H5" />
-      <path d="m11 18-6-6 6-6" />
-    </svg>
-  );
-}
-
 export function ChevronDownIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg {...stroke} {...props}>
@@ -93,15 +93,6 @@ export function ChevronRightIcon(props: SVGProps<SVGSVGElement>) {
   );
 }
 
-export function SearchIcon(props: SVGProps<SVGSVGElement>) {
-  return (
-    <svg {...stroke} {...props}>
-      <circle cx="11" cy="11" r="7" />
-      <path d="m20 20-3.5-3.5" />
-    </svg>
-  );
-}
-
 /** Zloženi zemljevid — gumb, ki naloži vdelan zemljevid. */
 export function MapIcon(props: SVGProps<SVGSVGElement>) {
   return (
@@ -109,15 +100,6 @@ export function MapIcon(props: SVGProps<SVGSVGElement>) {
       <path d="m9 4 6 2 5.4-1.8a.5.5 0 0 1 .6.5v13.6a1 1 0 0 1-.7 1L15 21l-6-2-5.4 1.8a.5.5 0 0 1-.6-.5V6.7a1 1 0 0 1 .7-1Z" />
       <path d="M9 4v15" />
       <path d="M15 6v15" />
-    </svg>
-  );
-}
-
-export function ClockIcon(props: SVGProps<SVGSVGElement>) {
-  return (
-    <svg {...stroke} {...props}>
-      <circle cx="12" cy="12" r="9" />
-      <path d="M12 7.5V12l3 2" />
     </svg>
   );
 }

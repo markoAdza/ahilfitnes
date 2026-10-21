@@ -2,7 +2,7 @@
   "name": "ahil-fitness",
   "version": "1.0.0",
   "private": true,
-  "description": "Ahil Fitness — 24/7 gym in Hrastnik, Zagorje and Sevnica",
+  "description": "Ahil Fitnes — fitnes 24/7 v Hrastniku, Trbovljah in Sevnici",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

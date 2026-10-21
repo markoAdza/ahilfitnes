@@ -1,11 +1,15 @@
 import type { Metadata, Viewport } from "next";
-import { Archivo, Inter } from "next/font/google";
+import { Archivo, Cormorant_Garamond } from "next/font/google";
 
 import { Footer } from "@/components/Footer";
+import { JoinDialog } from "@/components/JoinDialog";
 import { Navbar } from "@/components/Navbar";
-import { StickyCallBar } from "@/components/StickyCallBar";
+import { StickyJoinBar } from "@/components/StickyJoinBar";
 import { RevealRoot } from "@/components/motion/RevealRoot";
-import { site } from "@/lib/site";
+import { forms, listSl, pluralize } from "@/lib/i18n";
+import { locations, site } from "@/lib/site";
+
+const regions = [...new Set(locations.map((location) => location.region))];
 
 import "./globals.css";
 
@@ -13,18 +17,12 @@ import "./globals.css";
  * `latin-ext` ni izbira ampak pogoj: podnabor `latin` NE vsebuje č, š in ž.
  * Brez njega bi se šumniki risali iz sistemske nadomestne pisave, torej vidno
  * druge črke sredi besede.
- */
-const inter = Inter({
-  subsets: ["latin", "latin-ext"],
-  display: "swap",
-  variable: "--font-inter",
-});
-
-/*
- * Archivo za naslove. Naložena kot variabilna z osjo širine (wdth 62–125), da
- * displej stopnje v globals.css lahko uporabijo kondenzirano različico iste
- * družine — brez druge pisave in brez dodatnega zahtevka. Kondenzacija je tudi
- * funkcionalna: slovenski nizi so ~15–20 % daljši od angleških.
+ *
+ * Archivo za vse besedilo. Naložena kot variabilna z osjo širine (wdth 62–125),
+ * da displej stopnje v globals.css uporabijo kondenzirano različico iste
+ * družine, tekoče besedilo pa normalno širino — ena pisava, en zahtevek.
+ * Kondenzacija je tudi funkcionalna: slovenski nizi so ~15–20 % daljši od
+ * angleških.
  */
 const archivo = Archivo({
   subsets: ["latin", "latin-ext"],
@@ -33,10 +31,25 @@ const archivo = Archivo({
   variable: "--font-archivo",
 });
 
+/*
+ * Cormorant Garamond samo v kurzivi — klasični naglas (rimske številke,
+ * nadnapisi, "fitnes" v heroju). Pokončni rez se na strani ne pojavi, zato ga
+ * ne nalagamo.
+ */
+const cormorant = Cormorant_Garamond({
+  subsets: ["latin", "latin-ext"],
+  style: ["italic"],
+  weight: ["500", "600"],
+  display: "swap",
+  variable: "--font-cormorant",
+});
+
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: {
-    default: `${site.name} — fitnes 24/7 v Hrastniku, Zagorju in Sevnici`,
+    default: `${site.name} — fitnes 24/7 v ${listSl(
+      locations.map((location) => location.locative),
+    )}`,
     template: `%s — ${site.name}`,
   },
   description: site.description,
@@ -44,15 +57,10 @@ export const metadata: Metadata = {
     "fitnes",
     "fitnes 24/7",
     "telovadnica",
-    "Hrastnik",
-    "Zagorje ob Savi",
-    "Sevnica",
-    "Zasavje",
-    "Posavje",
-    "osebni trening",
-    "skupinske vadbe",
-    "savna",
-    "članarina",
+    ...locations.map((location) => location.name),
+    ...regions,
+    "osebni trener",
+    "cenik fitnes",
   ],
   alternates: { canonical: "/" },
   openGraph: {
@@ -60,19 +68,22 @@ export const metadata: Metadata = {
     siteName: site.name,
     locale: "sl_SI",
     url: site.url,
-    title: `${site.name} — odprto 24 ur, tri lokacije`,
+    title: `${site.name} — odprto 24 ur, ${pluralize(locations.length, forms.lokacija)}`,
     description: site.description,
   },
   robots: { index: true, follow: true },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0e0d0c",
+  themeColor: "#0b0b0a",
   width: "device-width",
   initialScale: 1,
 };
 
-/** Organizacija — vezni člen med tremi lokacijami na domači strani. */
+/**
+ * Organizacija — vezni člen med lokacijami na domači strani. `sameAs` manjka,
+ * dokler stranka ne sporoči pravih profilov na družbenih omrežjih.
+ */
 const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "Organization",
@@ -80,9 +91,8 @@ const organizationSchema = {
   url: site.url,
   logo: new URL("/images/logo.png", site.url).toString(),
   telephone: site.phone,
-  foundingDate: String(site.founded),
-  areaServed: ["Zasavje", "Posavje"],
-  sameAs: ["https://instagram.com", "https://facebook.com", "https://tiktok.com"],
+  email: site.email,
+  areaServed: regions,
 };
 
 /*
@@ -99,7 +109,7 @@ export default function RootLayout({
   return (
     <html
       lang="sl"
-      className={`${inter.variable} ${archivo.variable}`}
+      className={`${archivo.variable} ${cormorant.variable}`}
       suppressHydrationWarning
     >
       <body suppressHydrationWarning>
@@ -112,7 +122,7 @@ export default function RootLayout({
 
         <a
           href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-60 focus:rounded-[2px] focus:bg-accent focus:px-4 focus:py-2.5 focus:text-sm focus:font-medium focus:text-ink"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-60 focus:rounded-[2px] focus:bg-accent-bright focus:px-4 focus:py-2.5 focus:text-sm focus:font-medium focus:text-ink"
         >
           Na vsebino
         </a>
@@ -121,7 +131,8 @@ export default function RootLayout({
         <main id="main">{children}</main>
         <Footer />
 
-        <StickyCallBar />
+        <StickyJoinBar />
+        <JoinDialog />
         <RevealRoot />
       </body>
     </html>

@@ -5,10 +5,16 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
-import { ButtonLink } from "@/components/ui/Button";
-import { ArrowUpRightIcon, CloseIcon, MenuIcon, PhoneIcon } from "@/components/ui/Icons";
+import { JoinButton } from "@/components/JoinButton";
+import {
+  ArrowUpRightIcon,
+  CloseIcon,
+  MailIcon,
+  MenuIcon,
+  PhoneIcon,
+} from "@/components/ui/Icons";
 import { Label } from "@/components/ui/Label";
-import { nav, site, telHref } from "@/lib/site";
+import { mailHref, nav, site, telHref } from "@/lib/site";
 
 export function Navbar() {
   const pathname = usePathname();
@@ -93,14 +99,15 @@ export function Navbar() {
             className="shrink-0"
             aria-label={`${site.name} — domov`}
           >
+            {/* Vektorska sled originalnega logotipa, v kredi za temno podlago. */}
             <Image
-              src="/images/logo.png"
+              src="/brand/logo-light.svg"
               alt={site.name}
-              width={132}
-              height={148}
+              width={1780}
+              height={1936}
               priority
-              /* Grafika logotipa je črna na prozornem; na temnem jo obrnemo. */
-              className="h-9 w-auto brightness-0 invert"
+              unoptimized
+              className="h-10 w-auto"
             />
           </Link>
 
@@ -118,7 +125,7 @@ export function Navbar() {
                     className={[
                       "-mb-px inline-flex h-16 items-center border-b-2 text-[0.9375rem] transition-colors",
                       isActive(item.href)
-                        ? "border-accent font-medium text-chalk"
+                        ? "border-accent-bright font-medium text-chalk"
                         : "border-transparent text-body hover:text-chalk",
                     ].join(" ")}
                   >
@@ -138,8 +145,7 @@ export function Navbar() {
               <span className="nums">{site.phone}</span>
             </a>
 
-            {/* Vsaka pot do vpisa na tej strani je klic, zato gumb tako pravi. */}
-            <ButtonLink href={telHref(site.phone)}>Pokliči</ButtonLink>
+            <JoinButton size="md">Pridruži se</JoinButton>
 
             <button
               type="button"
@@ -192,7 +198,7 @@ export function Navbar() {
                   <span
                     className={[
                       "type-h2",
-                      isActive(item.href) ? "text-accent" : "text-chalk",
+                      isActive(item.href) ? "text-accent-bright" : "text-chalk",
                     ].join(" ")}
                   >
                     {item.label}
@@ -207,17 +213,22 @@ export function Navbar() {
           </ul>
 
           <div className="mt-auto pt-10">
-            <Label>Vpis po telefonu</Label>
+            <Label>Vpis po telefonu ali e-pošti</Label>
             <a
               href={telHref(site.phone)}
-              className="mt-3 flex items-center gap-3 text-chalk"
+              className="mt-4 flex items-center gap-3 text-chalk"
             >
               <PhoneIcon className="size-5 text-accent" />
               <span className="nums type-h3">{site.phone}</span>
             </a>
-            <p className="mt-3 text-sm text-muted">
-              Fitnesi so odprti 24 ur. Recepcija {site.reception}.
-            </p>
+            <a
+              href={mailHref("Vpis")}
+              className="mt-3 flex items-center gap-3 text-chalk"
+            >
+              <MailIcon className="size-5 text-accent" />
+              <span className="type-h3">{site.email}</span>
+            </a>
+            <p className="mt-4 text-sm text-muted">{site.access}.</p>
           </div>
         </nav>
       </div>
